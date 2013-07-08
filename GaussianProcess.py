@@ -132,7 +132,16 @@ class GaussianProcess:
         mu = np.dot( a.T, self.invQt)
         
         var = b - np.sum (  a * np.dot(self.invQ,a), axis=0)
-        return mu,var
+        # Derivative and partial derivatives of the function
+        deriv = np.zeros ( ( nn, self.D ) )
+        
+        for d in xrange ( self.D ):
+            c = a*(( np.tile( self.inputs[:,d], (nn,1)) - \
+                    np.tile( testing[:, d], ( self.n, 1)).T)**2).T
+            deriv[:, d] = expX[d]*np.dot(c.T, self.invQt)
+
+            
+        return mu,var, deriv
 
         
 if __name__ == "__main__":
@@ -161,7 +170,7 @@ if __name__ == "__main__":
         inputs_v = validate [ :, 1:]
         gp = GaussianProcess ( inputs_t, yields_t )
         theta_min= gp.learn_hyperparameters (n_tries=2)
-        pred_mu, pred_var = gp.predict ( inputs_v )
+        pred_mu, pred_var, par_dev = gp.predict ( inputs_v )
         r = ( yields_v - pred_mu )**2#/pred_var
         rmse.append ( [ np.sqrt(r.mean()), theta_min[1] ])
         
