@@ -91,14 +91,17 @@ class GaussianProcess:
     def _learn ( self, theta0 ):
         # minimise self.loglikelihood (with self.partial_devs) to learn
         # theta
-        from scipy.optimize import fmin_cg
+        from scipy.optimize import fmin_cg,fmin_l_bfgs_b
         self._set_params ( theta0*2 )
     
         try:
-            theta_opt = fmin_cg ( self.loglikelihood,
-                    theta0, fprime = self.partial_devs, \
-                    full_output=True, \
-                    retall = 1, disp=1 )
+            #theta_opt = fmin_cg ( self.loglikelihood,
+            #        theta0, fprime = self.partial_devs, \
+            #        full_output=True, \
+            #        retall = 1, disp=1 )
+            theta_opt = fmin_l_bfgs_b(  self.loglikelihood, \
+                     theta0, fprime = self.partial_devs, \
+                     factr=0.1, pgtol=1e-20,iprint=1)
         except np.linalg.LinAlgError:
             theta_opt = [ theta0, 99999999]
             
@@ -134,10 +137,10 @@ class GaussianProcess:
         var = b - np.sum (  a * np.dot(self.invQ,a), axis=0)
         # Derivative and partial derivatives of the function
         deriv = np.zeros ( ( nn, self.D ) )
-        
+        #import pdb;pdb.set_trace() 
         for d in xrange ( self.D ):
             c = a*(( np.tile( self.inputs[:,d], (nn,1)) - \
-                    np.tile( testing[:, d], ( self.n, 1)).T)**2).T
+                    np.tile( testing[:, d], ( self.n, 1)).T)).T
             deriv[:, d] = expX[d]*np.dot(c.T, self.invQt)
 
             
