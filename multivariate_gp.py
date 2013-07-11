@@ -4,7 +4,7 @@ This code provides a convenient way of emulating a multivariate model output (e.
 time series, or a spatial/temporal stack) by reducing it through principal component
 analysis. Each of the selected PCs is then modelled through a Gaussian Process
 
-USAGE
+Usage
 -----
 
 We need two arrays: one that stores the multivariate model output(`X`) and one that
@@ -14,8 +14,16 @@ arrays are important: `X` is `(N_training x N_full)` (i.e, `N_training` rows and
 
 .. code-block:: python
 
-   emulator = MultivariateEmulator( X, y )
+   emulator = MultivariateEmulator( X=X, y=y )
    prediction, der_prediction = emulator.predict ( y[0] ) # Say
+
+Saving emulators for future use
+--------------------------------
+
+If you want to save an emulator for re-use, you can do that easily by using the
+`dump_emulator` method with a filename. You can then instantiate the 
+`MultivariateEmulator` class setting only the `dump` keyword in the constructor
+to be the saved filename, and the emulator will be recreated.
 
 """
 import numpy as np
@@ -26,7 +34,7 @@ from GaussianProcess import GaussianProcess
 
 class MultivariateEmulator ( object ):
 
-    def __init__ ( self, X, y, hyperparams=None, thresh=0.98 ):
+    def __init__ ( self, dump=None, X=None, y=None, hyperparams=None, thresh=0.98 ):
         """Constructor
         
         The constructor takes an array of model outputs `X`, and a vector
@@ -42,6 +50,8 @@ class MultivariateEmulator ( object ):
         
         Parameters
         ----------
+        dump: str
+            A filename that will be read to populate X, y and hyperparams
         X: array ( N_train, N_full )
             The modelled output array for training
         y: array (N_train, N_param )
@@ -52,8 +62,25 @@ class MultivariateEmulator ( object ):
             The threshold at where to cutoff the percentage of 
             variance explained.
         """
+        if dump is not None:
+            if X is None and y is None:
+                f = np.load ( dump )
+                X = f[ 'X' ]
+                y = f[ 'y' ]
+                hyperparams = f[ 'hyperparams' ]
+            else:
+                raise ValueError, "You specified both a dump file and X and y"
+        else:
+            if X is None or y is None:
+                raise ValueError, "Need to specify both X and y"
+            else:
+                assert ( X.shape[0] == y.shape[0] ) 
+                assert X.ndim == 2 
+                assert y.ndim == 2
         
-        
+            
+        self.X_train = X
+        self.y_train = y
         print "Decomposing the input dataset into basis functions...",
         self.calculate_decomposition ( X, thresh )
         print "Done!\n ====> Using %d basis functions" % self.n_pcs
@@ -63,7 +90,21 @@ class MultivariateEmulator ( object ):
         self.train_emulators ( X, y, hyperparams=hyperparams )
 
 
-
+    def dump_emulator ( self, fname ):
+        """Save emulator to file for reuse
+        
+        Saves the emulator to a file (`.npz` format) for reuse.
+        
+        Parameters
+        ----------
+        fname: str
+            The output filename
+            
+        """
+        np.savez ( fname, X=self.X_train, y=self.y_train, \
+            hyperparams=self.hyperparams )
+        
+    
     def calculate_decomposition ( self, X, thresh ):
         """Does PCA decomposition
         
@@ -175,12 +216,21 @@ if __name__ == "__main__":
     train_paramsoot, keys = unpack ( train_params.tolist() )
     
     
-    mv_em = MultivariateEmulator(train_brf, train_paramsoot)
+    mv_em = MultivariateEmulator( X=train_brf, y=train_paramsoot)
     y_test = np.array([1.  ,  0.5 ,  0.5 ,  1.65,  0.5 ,  0.5 ,  0.73,  0.89,  0.44,  0.42,  0.1 ])
     hypers = mv_em.hyperparams
-    mv_em2 = MultivariateEmulator(train_brf, train_paramsoot, hyperparams=hypers )
+    mv_em2 = MultivariateEmulator( X=train_brf, y=train_paramsoot, hyperparams=hypers )
     y_arr = y_test*1
     for i in xrange(8):
         y_arr[-1] = 0.05 + 0.1*i
         plt.plot ( mv_em.predict ( y_arr )[0], '-r', lw=2 )
-        plt.plot ( mv_em2.predict ( y_arr )[0], '-r', lw=2 )
+        plt.plot ( mv_em2.predict ( y_arr )[0], '-k', lw=1 )
+    mv_em.dump_emulator ( "emulator1.npz" )
+    plt.figure()
+    new_em = MultivariateEmulator ( dump="emulator1.npz")
+    for i in xrange(8):
+        y_arr[-1] = 0.05 + 0.1*i
+        plt.plot ( mv_em.predict ( y_arr )[0], '-r', lw=2 )
+        plt.plot ( new_em.predict ( y_arr )[0], '-k', lw=1 )
+
+    
