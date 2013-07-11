@@ -68,6 +68,7 @@ class MultivariateEmulator ( object ):
                 X = f[ 'X' ]
                 y = f[ 'y' ]
                 hyperparams = f[ 'hyperparams' ]
+                thres = f[ 'thresh' ]
             else:
                 raise ValueError, "You specified both a dump file and X and y"
         else:
@@ -81,6 +82,7 @@ class MultivariateEmulator ( object ):
             
         self.X_train = X
         self.y_train = y
+        self.thresh = thresh
         print "Decomposing the input dataset into basis functions...",
         self.calculate_decomposition ( X, thresh )
         print "Done!\n ====> Using %d basis functions" % self.n_pcs
@@ -102,7 +104,7 @@ class MultivariateEmulator ( object ):
             
         """
         np.savez ( fname, X=self.X_train, y=self.y_train, \
-            hyperparams=self.hyperparams )
+            hyperparams=self.hyperparams, thresh=self.thresh )
         
     
     def calculate_decomposition ( self, X, thresh ):
