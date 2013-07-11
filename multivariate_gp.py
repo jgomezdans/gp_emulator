@@ -4,6 +4,19 @@ This code provides a convenient way of emulating a multivariate model output (e.
 time series, or a spatial/temporal stack) by reducing it through principal component
 analysis. Each of the selected PCs is then modelled through a Gaussian Process
 
+USAGE
+-----
+
+We need two arrays: one that stores the multivariate model output(`X`) and one that
+stores the model parameters that produced said outputs (`y`). The sizes of these
+arrays are important: `X` is `(N_training x N_full)` (i.e, `N_training` rows and
+`N_full` elements in each column). `y` is `( N_train, N_params )`. Then simply
+
+.. code-block:: python
+
+   emulator = MultivariateEmulator( X, y )
+   prediction, der_prediction = emulator.predict ( y[0] ) # Say
+
 """
 import numpy as np
 import matplotlib.pyplot as plt
