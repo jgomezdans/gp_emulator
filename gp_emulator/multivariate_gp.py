@@ -34,7 +34,7 @@ from GaussianProcess import GaussianProcess
 
 class MultivariateEmulator ( object ):
 
-    def __init__ ( self, dump=None, X=None, y=None, hyperparams=None, thresh=0.98 ):
+    def __init__ ( self, dump=None, X=None, y=None, hyperparams=None, basis_functions=None, thresh=0.98 ):
         """Constructor
         
         The constructor takes an array of model outputs `X`, and a vector
@@ -83,9 +83,13 @@ class MultivariateEmulator ( object ):
         self.X_train = X
         self.y_train = y
         self.thresh = thresh
-        print "Decomposing the input dataset into basis functions...",
-        self.calculate_decomposition ( X, thresh )
-        print "Done!\n ====> Using %d basis functions" % self.n_pcs
+        if basis_functions is None:
+            print "Decomposing the input dataset into basis functions...",
+            self.calculate_decomposition ( X, thresh )
+            print "Done!\n ====> Using %d basis functions" % self.n_pcs
+        else:
+            self.basis_functions = basis_functions
+            self.n_pcs = basis_functions.shape[0] 
         if hyperparams is not None:
             assert ( y.shape[1] +2 == hyperparams.shape[0] ) and \
                 (  self.n_pcs == hyperparams.shape[1] )
