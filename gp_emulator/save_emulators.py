@@ -35,7 +35,9 @@ class EmulatorStorage ( object ):
         tag: list
             A list that helps as a tag
         """
-        tag = repr ( tag )#.strip("()").split(",")
+        if type( tag ) != str:
+            tag = repr ( tag )#.strip("()").split(",")
+            
 
         if isinstance ( emulator, MultivariateEmulator ):
             emulator_dict = { "X": emulator.X_train, \
