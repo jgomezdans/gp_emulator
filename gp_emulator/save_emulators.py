@@ -17,12 +17,7 @@ from multivariate_gp import MultivariateEmulator
 
 class EmulatorStorage ( object ):
     def __init__ ( self, fname ):
-        if os.path.exists ( fname ):
-            # File exists, so open and get a handle to it
-            self.emulators = shelve.open ( fname )
-        else:
-            print "File doesn't exist, creating it"
-            self.emulators = shelve.open ( fname )
+        self.fname = fname
     def dump_emulator ( self, emulator, tag ):
         """
         Dumps an emulator to storage file (a Python pickle). We need a "tag"
@@ -35,6 +30,13 @@ class EmulatorStorage ( object ):
         tag: list
             A list that helps as a tag
         """
+        if os.path.exists ( self.fname ):
+            # File exists, so open and get a handle to it
+            emulators = shelve.open ( self.fname )
+        else:
+            print "File doesn't exist, creating it"
+            emulators = shelve.open ( self.fname )
+
         if type( tag ) != str:
             tag = repr ( tag )#.strip("()").split(",")
             
@@ -54,7 +56,8 @@ class EmulatorStorage ( object ):
                               "targets": emulator.targets, \
                               "theta": emulator.theta }
 
-        self.emulators[tag] = emulator_dict
+        emulators[tag] = emulator_dict
+        emulators.close() # Flush!
         
     def _declutter_key ( self, tag ):
         return repr(tuple(tag))
@@ -64,18 +67,27 @@ class EmulatorStorage ( object ):
         Recovers an emulator from storage, and returns it to 
         the calller
         """
+        if os.path.exists ( self.fname ):
+            # File exists, so open and get a handle to it
+            emulators = shelve.open ( self.fname )
+        else:
+            raise IOError:
+                print "File doesn't exist!"
+                
+
         if type(tag) != str:
             tag = self._declutter_key ( tag )
             
-        if self.emulators[tag].has_key ( "basis_functions" ):
+        if emulators[tag].has_key ( "basis_functions" ):
             gp = MultivariateEmulator ( \
-                X = self.emulators[tag]["X"], \
-                y=self.emulators[tag]["y"], \
-                hyperparams = self.emulators[tag]["hyperparams"], 
-                basis_functions = self.emulators[tag]["basis_functions"] )
+                X = emulators[tag]["X"], \
+                y=emulators[tag]["y"], \
+                hyperparams = emulators[tag]["hyperparams"], 
+                basis_functions = emulators[tag]["basis_functions"] )
         else:
             gp = GaussianProcess ( \
-                self.emulators[tag]["inputs"], \
-                self.emulators[tag]["targets"] )
-            gp._set_params ( self.emulators[tag]['theta'] )
+                emulators[tag]["inputs"], \
+                emulators[tag]["targets"] )
+            gp._set_params ( emulators[tag]['theta'] )
+        emulators.close()
         return gp
