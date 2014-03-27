@@ -18,6 +18,7 @@ from multivariate_gp import MultivariateEmulator
 class EmulatorStorage ( object ):
     def __init__ ( self, fname ):
         self.fname = fname
+        
     def dump_emulator ( self, emulator, tag ):
         """
         Dumps an emulator to storage file (a Python pickle). We need a "tag"
@@ -30,6 +31,7 @@ class EmulatorStorage ( object ):
         tag: list
             A list that helps as a tag
         """
+       
         if os.path.exists ( self.fname ):
             # File exists, so open and get a handle to it
             emulators = shelve.open ( self.fname )
@@ -71,8 +73,7 @@ class EmulatorStorage ( object ):
             # File exists, so open and get a handle to it
             emulators = shelve.open ( self.fname )
         else:
-            raise IOError:
-                print "File doesn't exist!"
+            raise IOError ("File %s doesn't exist!" % self.fname )
                 
 
         if type(tag) != str:
