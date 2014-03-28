@@ -34,7 +34,7 @@ from GaussianProcess import GaussianProcess
 
 class MultivariateEmulator ( object ):
 
-    def __init__ ( self, dump=None, X=None, y=None, hyperparams=None, basis_functions=None, thresh=0.98 ):
+    def __init__ ( self, dump=None, X=None, y=None, hyperparams=None, thresh=0.98 ):
         """Constructor
         
         The constructor takes an array of model outputs `X`, and a vector
@@ -83,13 +83,9 @@ class MultivariateEmulator ( object ):
         self.X_train = X
         self.y_train = y
         self.thresh = thresh
-        if basis_functions is None:
-            print "Decomposing the input dataset into basis functions...",
-            self.calculate_decomposition ( X, thresh )
-            print "Done!\n ====> Using %d basis functions" % self.n_pcs
-        else:
-            self.basis_functions = basis_functions
-            self.n_pcs = basis_functions.shape[0] 
+        print "Decomposing the input dataset into basis functions...",
+        self.calculate_decomposition ( X, thresh )
+        print "Done!\n ====> Using %d basis functions" % self.n_pcs
         if hyperparams is not None:
             assert ( y.shape[1] +2 == hyperparams.shape[0] ) and \
                 (  self.n_pcs == hyperparams.shape[1] )
@@ -181,18 +177,15 @@ class MultivariateEmulator ( object ):
         do_deriv: bool
             Whether derivatives are required or not
         """
-        y = np.atleast_2d ( y ) # Just in case        
-        n_elements = y.shape[0]
-        fwd = np.zeros ( ( n_elements, self.basis_functions[0].shape[0] ) )
+        fwd = np.zeros ( self.basis_functions[0].shape[0] )
+        y = np.atleast_2d ( y ) # Just in case
         if do_deriv:
-            deriv = np.zeros ( ( y.shape[0], y.shape[1], self.basis_functions.shape[1] ) )
+            deriv = np.zeros ( ( y.shape[1], self.basis_functions.shape[1] ) )
         for i in xrange ( self.n_pcs ):
             pred_mu, pred_var, grad = self.emulators[i].predict ( y )
-            fwd = fwd + pred_mu[:, None] * self.basis_functions[i]
+            fwd += pred_mu * self.basis_functions[i]
             if do_deriv:
-                for i in xrange(n_elements):
-                    deriv[i,:,:] = deriv[i,:,:] + \
-                        np.matrix(grad[i,:]).T * np.matrix(self.basis_functions[i])
+                deriv += np.matrix(grad).T * np.matrix(self.basis_functions[i])
         if do_deriv:
             return fwd.squeeze(), deriv
         else:
@@ -242,12 +235,4 @@ if __name__ == "__main__":
         plt.plot ( mv_em.predict ( y_arr )[0], '-r', lw=2 )
         plt.plot ( new_em.predict ( y_arr )[0], '-k', lw=1 )
 
-    Y = []
-    y_test = np.array([1.  ,  0.5 ,  0.5 ,  1.65,  0.5 ,  0.5 ,  0.73,  0.89,  0.44,  0.42,  0.1 ])
-    for i in xrange(8):
-        yy = y_test*1
-        yy[-1] = 0.05 + 0.1*i
-        Y.append ( yy)
-    Y = np.array (Y)
-        
     
