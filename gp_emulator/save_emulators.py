@@ -61,6 +61,18 @@ class EmulatorStorage ( object ):
         emulators[tag] = emulator_dict
         emulators.close() # Flush!
         
+    def get_keys ( self ):
+        """Print out the keys"""
+
+        if os.path.exists ( self.fname ):
+            # File exists, so open and get a handle to it
+            emulators = shelve.open ( self.fname )
+        else:
+            raise IOError ("File %s doesn't exist!" % self.fname )
+        keys = emulators.keys()
+        emulators.close()
+        return keys
+        
     def _declutter_key ( self, tag ):
         return repr(tuple(tag))
     
