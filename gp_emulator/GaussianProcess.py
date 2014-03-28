@@ -101,7 +101,7 @@ class GaussianProcess:
             #        retall = 1, disp=1 )
             theta_opt = fmin_l_bfgs_b(  self.loglikelihood, \
                      theta0, fprime = self.partial_devs, \
-                     factr=0.1, pgtol=1e-20,iprint=50)
+                     factr=0.1, pgtol=1e-20,iprint=1)
         except np.linalg.LinAlgError:
             theta_opt = [ theta0, 99999999]
             
