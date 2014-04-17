@@ -88,12 +88,15 @@ class GaussianProcess:
         self.theta = theta
         self._prepare_likelihood ( )
         
-    def _learn ( self, theta0 ):
+    def _learn ( self, theta0, verbose ):
         # minimise self.loglikelihood (with self.partial_devs) to learn
         # theta
         from scipy.optimize import fmin_cg,fmin_l_bfgs_b
         self._set_params ( theta0*2 )
-    
+        if verbose:
+            iprint = 1
+        else:
+            iprint = -1
         try:
             #theta_opt = fmin_cg ( self.loglikelihood,
             #        theta0, fprime = self.partial_devs, \
@@ -101,21 +104,22 @@ class GaussianProcess:
             #        retall = 1, disp=1 )
             theta_opt = fmin_l_bfgs_b(  self.loglikelihood, \
                      theta0, fprime = self.partial_devs, \
-                     factr=0.1, pgtol=1e-20,iprint=1)
+                     factr=0.1, pgtol=1e-20, iprint=iprint)
         except np.linalg.LinAlgError:
             theta_opt = [ theta0, 99999999]
             
         return theta_opt
 
-    def learn_hyperparameters ( self, n_tries=15 ):
+    def learn_hyperparameters ( self, n_tries=15, verbose=False ):
         log_like = []
         params = []
         for theta in 5.*(np.random.rand(n_tries, self.D+2) - 0.5):
-            T = self._learn ( theta )
+            T = self._learn ( theta ,verbose )
             log_like.append ( T[1] )
             params.append ( T[0] )
         log_like = np.array ( log_like )
         idx = np.argsort( log_like )[0]
+        print "After %d, the minimum cost was %e" % ( n_tries, log_like[idx] )
         self._set_params ( params[idx])
         return (log_like[idx], params[idx] )
 
