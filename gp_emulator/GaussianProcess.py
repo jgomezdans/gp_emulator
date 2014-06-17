@@ -129,7 +129,8 @@ class GaussianProcess:
         
         expX = np.exp ( self.theta )
         
-        a = dist.cdist ( np.sqrt(expX[:2])*self.inputs, np.sqrt(expX[:2])*testing, \
+        a = dist.cdist ( np.sqrt(expX[:(self.D)])*self.inputs, \
+			np.sqrt(expX[:(self.D)])*testing, \
             'sqeuclidean')
         a = expX[self.D]*np.exp(-0.5*a)
         b = expX[self.D]
