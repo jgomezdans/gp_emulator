@@ -130,8 +130,8 @@ class GaussianProcess:
         expX = np.exp ( self.theta )
         
         a = dist.cdist ( np.sqrt(expX[:(self.D)])*self.inputs, \
-			np.sqrt(expX[:(self.D)])*testing, \
-            'sqeuclidean')
+            np.sqrt(expX[:(self.D)])*testing, 'sqeuclidean')
+        
         a = expX[self.D]*np.exp(-0.5*a)
         b = expX[self.D]
         
@@ -140,15 +140,15 @@ class GaussianProcess:
         var = b - np.sum (  a * np.dot(self.invQ,a), axis=0)
         # Derivative and partial derivatives of the function
         deriv = np.zeros ( ( nn, self.D ) )
-        #import pdb;pdb.set_trace() 
+
         for d in xrange ( self.D ):
-            c = a*(( np.tile( self.inputs[:,d], (nn,1)) - \
-                    np.tile( testing[:, d], ( self.n, 1)).T)).T
+            aa = self.inputs[:,d].flatten()[None,:] - testing[:,d].flatten()[:,None]
+            c = a*aa.T
+
             deriv[:, d] = expX[d]*np.dot(c.T, self.invQt)
 
             
-        return mu,var, deriv
-
+        return mu, var, deriv
         
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
