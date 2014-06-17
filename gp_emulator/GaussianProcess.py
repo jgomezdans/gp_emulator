@@ -123,7 +123,7 @@ class GaussianProcess:
         self._set_params ( params[idx])
         return (log_like[idx], params[idx] )
 
-    def predict ( self, testing ):
+    def predict ( self, testing, do_unc=True ):
         ( nn, D ) = testing.shape
         assert D == self.D
         
@@ -136,8 +136,8 @@ class GaussianProcess:
         b = expX[self.D]
         
         mu = np.dot( a.T, self.invQt)
-        
-        var = b - np.sum (  a * np.dot(self.invQ,a), axis=0)
+        if do_unc:
+	    var = b - np.sum (  a * np.dot(self.invQ,a), axis=0)
         # Derivative and partial derivatives of the function
         deriv = np.zeros ( ( nn, self.D ) )
 
@@ -147,8 +147,10 @@ class GaussianProcess:
 
             deriv[:, d] = expX[d]*np.dot(c.T, self.invQt)
 
-            
-        return mu, var, deriv
+        if do_unc:
+            return mu, var, deriv
+        else:
+	    return mu, deriv
         
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
