@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import scipy.spatial.distance as dist
 import random
-import pdb
 
 def k_fold_cross_validation(X, K, randomise = False):
     """
@@ -128,11 +128,9 @@ class GaussianProcess:
         assert D == self.D
         
         expX = np.exp ( self.theta )
-        a = np.zeros ( (self.n, nn) )
-        for d in xrange ( self.D ):
-            a = a + expX[d]*((( np.tile ( self.inputs[:, d], ( nn, 1)) - \
-                np.tile ( testing[:, d], ( self.n, 1)).T))**2).T
         
+        a = dist.cdist ( np.sqrt(expX[:2])*self.inputs, np.sqrt(expX[:2])*testing, \
+            'sqeuclidean')
         a = expX[self.D]*np.exp(-0.5*a)
         b = expX[self.D]
         
@@ -178,6 +176,9 @@ if __name__ == "__main__":
         gp = GaussianProcess ( inputs_t, yields_t )
         theta_min= gp.learn_hyperparameters (n_tries=2)
         pred_mu, pred_var, par_dev = gp.predict ( inputs_v )
+        print "TEST"
+        print inputs_v
+        print pred_mu, pred_var, par_dev
         r = ( yields_v - pred_mu )**2#/pred_var
         rmse.append ( [ np.sqrt(r.mean()), theta_min[1] ])
         
