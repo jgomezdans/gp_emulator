@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import warnings
 import numpy as np
 import scipy.spatial.distance as dist
 import random
@@ -57,9 +58,12 @@ class GaussianProcess:
 
     def loglikelihood ( self, theta ):
         self._set_params ( theta )
+        
         loglikelihood = 0.5*self.logdetQ + \
                         0.5*np.dot ( self.targets, self.invQt ) + \
                         0.5*self.n*np.log(2.*np.pi )
+        self.current_theta = theta
+        self.current_loglikelihood = loglikelihood
         return loglikelihood
 
     def partial_devs ( self, theta ):
@@ -106,7 +110,11 @@ class GaussianProcess:
                      theta0, fprime = self.partial_devs, \
                      factr=0.1, pgtol=1e-20, iprint=iprint)
         except np.linalg.LinAlgError:
-            theta_opt = [ theta0, 99999999]
+            warnings.warn ("Optimisation resulted in linear algebra error. " + \
+                "Returning last loglikelihood calculated, but this is fishy", \
+                    RuntimeWarning )
+            theta_opt = [ self.current_theta, self.current_loglikelihood ]
+            
             
         return theta_opt
 
