@@ -1,0 +1,2 @@
+include setup.py README.rst
+recursive-include gp_emulator/GaussianProcess.py __init__.py lhd.py multivariate_gp.py save_emulators.py
