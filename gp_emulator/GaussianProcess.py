@@ -154,12 +154,34 @@ class GaussianProcess:
             c = a*aa.T
 
             deriv[:, d] = expX[d]*np.dot(c.T, self.invQt)
-
         if do_unc:
             return mu, var, deriv
         else:
 	    return mu, deriv
         
+    def hessian ( self, testing ):
+        '''calculates the hessian of the GP for the testing sample. 
+           hessian returns a (nn by d by d) array
+        '''
+        ( nn, D ) = testing.shape
+        assert D == self.D
+        expX = np.exp ( self.theta )
+        aprime = dist.cdist ( np.sqrt(expX[:(self.D)])*self.inputs, \
+                np.sqrt(expX[:(self.D)])*testing, 'sqeuclidean')
+        a = expX[self.D]*np.exp(-0.5*aprime)
+        dd_addition = np.identity(self.D)*expX[:(self.D)]
+        hess = np.zeros ( ( nn, self.D , self.D) )
+        for d in xrange ( self.D ):
+            for d2 in xrange(self.D):
+                aa = expX[d]*( self.inputs[:,d].flatten()[None,:] - 
+                               testing[:,d].flatten()[:,None] )*   \
+                     expX[d2]*( self.inputs[:,d2].flatten()[None,:] - 
+                                testing[:,d2].flatten()[:,None] ) -  \
+                     dd_addition[d,d2]
+                cc = a*(aa.T)
+                hess[:, d,d2] = np.dot(cc.T, self.invQt)
+        return hess
+
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
     np.set_printoptions(precision=2, suppress=True)
