@@ -96,7 +96,7 @@ class GaussianProcess:
         # minimise self.loglikelihood (with self.partial_devs) to learn
         # theta
         from scipy.optimize import fmin_cg,fmin_l_bfgs_b
-        self._set_params ( theta0*2 )
+        self._set_params ( theta0 )
         if verbose:
             iprint = 1
         else:
@@ -113,8 +113,8 @@ class GaussianProcess:
             warnings.warn ("Optimisation resulted in linear algebra error. " + \
                 "Returning last loglikelihood calculated, but this is fishy", \
                     RuntimeWarning )
-            theta_opt = [ self.current_theta, self.current_loglikelihood ]
-            
+            #theta_opt = [ self.current_theta, self.current_loglikelihood ]
+            theta_opt = [ self.current_theta, 9999]
             
         return theta_opt
 
