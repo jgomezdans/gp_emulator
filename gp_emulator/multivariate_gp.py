@@ -34,7 +34,7 @@ from GaussianProcess import GaussianProcess
 
 class MultivariateEmulator ( object ):
 
-    def __init__ ( self, dump=None, X=None, y=None, hyperparams=None, thresh=0.98 ):
+    def __init__ ( self, dump=None, X=None, y=None, hyperparams=None, thresh=0.98, n_tries=5 ):
         """Constructor
         
         The constructor takes an array of model outputs `X`, and a vector
@@ -89,7 +89,7 @@ class MultivariateEmulator ( object ):
         if hyperparams is not None:
             assert ( y.shape[1] +2 == hyperparams.shape[0] ) and \
                 (  self.n_pcs == hyperparams.shape[1] )
-        self.train_emulators ( X, y, hyperparams=hyperparams )
+        self.train_emulators ( X, y, hyperparams=hyperparams, n_tries=n_tries )
 
 
     def dump_emulator ( self, fname ):
@@ -129,7 +129,7 @@ class MultivariateEmulator ( object ):
         self.basis_functions = V [ pcnt_var_explained <= thresh ]
         self.n_pcs = np.sum ( pcnt_var_explained <= thresh )
     
-    def train_emulators ( self, X, y, hyperparams ):
+    def train_emulators ( self, X, y, hyperparams, n_tries=2 ):
         """Train the emulators
         
         This sets up the required emulators. If necessary (`hypeparams` 
@@ -152,7 +152,7 @@ class MultivariateEmulator ( object ):
             if hyperparams is None:
                 print "\tFitting GP for basis function %d" % i
                 self.hyperparams[ :, i] = \
-                    self.emulators[i].learn_hyperparameters ( n_tries = 2 )[1]
+                    self.emulators[i].learn_hyperparameters ( n_tries = n_tries )[1]
             else:
                 self.hyperparams[:,i] = hyperparams[:,i]
                 self.emulators[i]._set_params ( hyperparams[:, i] )
