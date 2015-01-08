@@ -69,6 +69,23 @@ class MultivariateEmulator ( object ):
                 y = f[ 'y' ]
                 hyperparams = f[ 'hyperparams' ]
                 thres = f[ 'thresh' ]
+                if f.has_key ( "basis_functions" ):
+                    basis_functions = f[ 'basis_functions' ]
+                    n_pcs = f[ 'n_pcs' ]
+                    f.close()
+                else:
+                    f.close()
+                    print "Decomposing the input dataset into basis functions...",
+                    self.calculate_decomposition ( X, thresh )
+                    print "Done!\n ====> Using %d basis functions" % self.n_pcs
+                    out_fname = os.path.basename ( dump )
+                    np.savez_compressed( os.path.join ( "/tmp", out_fname ), \
+                        X=X, y=y, hyperparams=hyperparams, thresh=thresh, \
+                        basis_functions=self.basis_functions, n_pcs=self.n_pcs )
+                    shutil.move ( os.path.join ( "/tmp", out_fname ), dump )
+                    print "Updated emulator file with basis functions"
+                    basis_functions = self.basis_functions
+                    n_pcs = self.n_pcs
             else:
                 raise ValueError, "You specified both a dump file and X and y"
         else:
@@ -78,14 +95,22 @@ class MultivariateEmulator ( object ):
                 assert ( X.shape[0] == y.shape[0] ) 
                 assert X.ndim == 2 
                 assert y.ndim == 2
+                basis_functions = None
         
             
         self.X_train = X
         self.y_train = y
         self.thresh = thresh
-        print "Decomposing the input dataset into basis functions...",
-        self.calculate_decomposition ( X, thresh )
-        print "Done!\n ====> Using %d basis functions" % self.n_pcs
+        if basis_functions is None:
+            print "Decomposing the input dataset into basis functions...",
+            self.calculate_decomposition ( X, thresh )
+            print "Done!\n ====> Using %d basis functions" % self.n_pcs
+            basis_functions = self.basis_functions
+            n_pcs = self.n_pcs
+
+        self.n_pcs = n_pcs
+        self.basis_functions = basis_functions
+        
         if hyperparams is not None:
             assert ( y.shape[1] +2 == hyperparams.shape[0] ) and \
                 (  self.n_pcs == hyperparams.shape[1] )
@@ -103,8 +128,9 @@ class MultivariateEmulator ( object ):
             The output filename
             
         """
-        np.savez ( fname, X=self.X_train, y=self.y_train, \
-            hyperparams=self.hyperparams, thresh=self.thresh )
+        np.savez_compressed ( fname, X=self.X_train, y=self.y_train, \
+            hyperparams=self.hyperparams, thresh=self.thresh, \
+            basis_functions=self.basis_functions, n_pcs=self.n_pcs )
         
     
     def calculate_decomposition ( self, X, thresh ):
