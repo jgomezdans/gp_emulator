@@ -26,6 +26,9 @@ If you want to save an emulator for re-use, you can do that easily by using the
 to be the saved filename, and the emulator will be recreated.
 
 """
+import os
+import shutil
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -69,11 +72,12 @@ class MultivariateEmulator ( object ):
                 y = f[ 'y' ]
                 hyperparams = f[ 'hyperparams' ]
                 thres = f[ 'thresh' ]
-                if f.has_key ( "basis_functions" ):
+                try:
+#                if f.has_key ( "basis_functions" ):
                     basis_functions = f[ 'basis_functions' ]
                     n_pcs = f[ 'n_pcs' ]
                     f.close()
-                else:
+                except KeyError:
                     f.close()
                     print "Decomposing the input dataset into basis functions...",
                     self.calculate_decomposition ( X, thresh )
