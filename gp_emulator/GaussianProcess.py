@@ -66,7 +66,9 @@ class GaussianProcess:
         self.Z = exp_theta[self.D]*np.exp ( -0.5*self.Z)
         self.Q = self.Z +\
             exp_theta[self.D+1]*np.eye ( self.n )
-        self.invQ = np.linalg.inv ( self.Q )
+        L = np.linalg.cholesky ( self.Q )
+        self.invQt = np.dot ( np.linalg.inv(L).dot( np.linalg.inv(L).T) )
+        #self.invQ = np.linalg.inv ( self.Q )
         self.invQt = np.dot ( self.invQ, self.targets )
 
         self.logdetQ = 2.0 * np.sum ( np.log ( np.diag ( \
