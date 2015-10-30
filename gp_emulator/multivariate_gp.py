@@ -162,12 +162,14 @@ class MultivariateEmulator ( object ):
         if group in f.keys():
             raise ValueError, "Emulator already exists!"
         f.create_group ("/%s" % group )
-        f.create_dataset ( "/%s/X_train" % group, data=self.X_train )
-        f.create_dataset ( "/%s/y_train" % group, data=self.y_train )
-        f.create_dataset ( "/%s/hyperparams" % group, data=self.hyperparams )
-        f.create_dataset ( "/%s/basis_functions" % group, data=self.basis_functions )
-        f.create_dataset ( "/%s/thresh" % group, data=self.thresh )
-        f.create_dataset ( "/%s/n_pcs" % group, data=self.n_pcs )
+        f.create_dataset ( "/%s/X_train" % group, data=self.X_train, compression="gzip"  )
+        f.create_dataset ( "/%s/y_train" % group, data=self.y_train, compression="gzip"  )
+        f.create_dataset ( "/%s/hyperparams" % group, data=self.hyperparams,
+                          compression="gzip"  )
+        f.create_dataset ( "/%s/basis_functions" % group, data=self.basis_functions,
+                          compression="gzip"  )
+        f.create_dataset ( "/%s/thresh" % group, data=self.thresh  )
+        f.create_dataset ( "/%s/n_pcs" % group, data=self.n_pcs)
         f.close()
         print "Emulator safely saved"
                     

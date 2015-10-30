@@ -11,6 +11,7 @@ import os
 import shelve
 
 import numpy as np
+import h5py
 
 from GaussianProcess import GaussianProcess
 from multivariate_gp import MultivariateEmulator
@@ -114,16 +115,16 @@ def convert_npz_to_hdf5 ( npz_file, hdf5_file ):
     X = f[ 'X' ]
     y = f[ 'y' ]
     hyperparams = f[ 'hyperparams' ]
-    thres = f[ 'thresh' ]
+    thresh = f[ 'thresh' ]
     basis_functions = f[ 'basis_functions' ]
     n_pcs = f[ 'n_pcs' ]
     f.close()
     fname = os.path.basename ( npz_file )
     fname = fname.replace("xx", "")
     sza, vza, raa, model = fname.split("_")
-    sza = int ( sza )
-    vza = int ( vza )
-    raa = int ( raa )
+    sza = int ( float(sza) )
+    vza = int ( float(vza) )
+    raa = int ( float(raa) )
     model = model.split(".")[0]
     try:
         f = h5py.File (hdf5_file, 'r+')
@@ -131,16 +132,17 @@ def convert_npz_to_hdf5 ( npz_file, hdf5_file ):
         print "The file %s did not exist. Creating it" % hdf5_file
         f = h5py.File (hdf5_file, 'w')
         f
-    group = '%s_%03d_%03d_%03d' % ( model_name, sza, vza, raa )
+    group = '%s_%03d_%03d_%03d' % ( model, sza, vza, raa )
     if group in f.keys():
         raise ValueError, "Emulator already exists!"
     f.create_group ("/%s" % group )
-    f.create_dataset ( "/%s/X_train" % group, data=X_train )
-    f.create_dataset ( "/%s/y_train" % group, data=y_train )
-    f.create_dataset ( "/%s/hyperparams" % group, data=hyperparams )
-    f.create_dataset ( "/%s/basis_functions" % group, data=basis_functions )
-    f.create_dataset ( "/%s/thresh" % group, data=thresh )
-    f.create_dataset ( "/%s/n_pcs" % group, data=n_pcs )
+    f.create_dataset ( "/%s/X_train" % group, data=X, compression="gzip" )
+    f.create_dataset ( "/%s/y_train" % group, data=y, compression="gzip"  )
+    f.create_dataset ( "/%s/hyperparams" % group, data=hyperparams, compression="gzip"  )
+    f.create_dataset ( "/%s/basis_functions" % group, data=basis_functions, 
+                      compression="gzip"  )
+    f.create_dataset ( "/%s/thresh" % group, data=thresh  )
+    f.create_dataset ( "/%s/n_pcs" % group, data=n_pcs)
     f.close()
     print "Emulator safely saved"
 
