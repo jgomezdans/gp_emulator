@@ -72,7 +72,7 @@ class MultivariateEmulator ( object ):
         if dump is not None:
             if X is None and y is None:
                 f = h5py.File ( dump, 'r+')
-                group = "/%s_%03d_%03d_%03d" % ( model, sza, vza, raa )
+                group = "%s_%03d_%03d_%03d" % ( model, sza, vza, raa )
                 X = f[group + '/X_train'][:,:]
                 y = f[group + '/y_train'][:,:]
                 hyperparams = f[group+'/hyperparams'][:,:]
