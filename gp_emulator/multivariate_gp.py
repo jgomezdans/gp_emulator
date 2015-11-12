@@ -71,15 +71,39 @@ class MultivariateEmulator ( object ):
         """
         if dump is not None:
             if X is None and y is None:
-                f = h5py.File ( dump, 'r+')
-                group = "%s_%03d_%03d_%03d" % ( model, sza, vza, raa )
-                X = f[group + '/X_train'][:,:]
-                y = f[group + '/y_train'][:,:]
-                hyperparams = f[group+'/hyperparams'][:,:]
-                thresh = f[group+'/thresh'].value
-                basis_functions = f[group+"/basis_functions"][:,:]
-                n_pcs = f[group+"/n_pcs"].value
-                f.close()
+		if dump.find (".h5") > 0 or dump.find(".hdf5") > 0:
+	            f = h5py.File ( dump, 'r+')
+ 	            group = "%s_%03d_%03d_%03d" % ( model, sza, vza, raa )
+        	    X = f[group + '/X_train'][:,:]
+                    y = f[group + '/y_train'][:,:]
+                    hyperparams = f[group+'/hyperparams'][:,:]
+                    thresh = f[group+'/thresh'].value
+                    basis_functions = f[group+"/basis_functions"][:,:]
+                    n_pcs = f[group+"/n_pcs"].value
+                    f.close()
+		elif dump.find(".npz"):
+                    f =  np.load ( dump ) 
+                    X = f[ 'X' ]
+                    y = f[ 'y' ]
+                    hyperparams = f[ 'hyperparams' ]
+                    thresh = f[ 'thresh' ]
+                    if dict(f).has_key ( "basis_functions" ):
+                        basis_functions = f[ 'basis_functions' ]
+                        n_pcs = f[ 'n_pcs' ]
+                        f.close()
+                    else:
+                        f.close()
+                        print "Decomposing the input dataset into basis functions...",
+                        self.calculate_decomposition ( X, thresh )
+                        print "Done!\n ====> Using %d basis functions" % self.n_pcs
+                        out_fname = os.path.basename ( dump )
+                        np.savez_compressed( os.path.join ( "/tmp", out_fname ), \
+                            X=X, y=y, hyperparams=hyperparams, thresh=thresh, \
+                            basis_functions=self.basis_functions, n_pcs=self.n_pcs )
+                        shutil.move ( os.path.join ( "/tmp", out_fname ), dump )
+                        print "Updated emulator file with basis functions"
+                        basis_functions = self.basis_functions
+                        n_pcs = self.n_pcs
             else:
                 raise ValueError, "You specified both a dump file and X and y"
         else:
