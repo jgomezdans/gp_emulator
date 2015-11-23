@@ -3,6 +3,8 @@ import multiprocessing
 import numpy as np
 import scipy.stats as ss
 from lhd import lhd
+from GaussianProcess import GaussianProcess
+from multivariate_gp import MultivariateEmulator
 
 def create_training_set ( parameters, minvals, maxvals, n_train=200 ):
     """Creates a traning set for a set of parameters specified by 
@@ -95,7 +97,7 @@ def create_emulator_validation ( f_simulator, parameters, minvals, maxvals,
     
     # First, create the training set, using the appropriate function from
     # above...
-    samples, distributions = gp_emulator.create_training_set ( params, minvals, maxvals, 
+    samples, distributions = create_training_set ( parameters, minvals, maxvals, 
                                                   n_train=n_train )
     # Now, create the validation set, using the distributions object we got
     # from creating the training set
@@ -116,10 +118,10 @@ def create_emulator_validation ( f_simulator, parameters, minvals, maxvals,
     validation_set = np.array ( validation_set )
 
     try:
-        gp = gp_emulator.MultivariateEmulator(X=training_set , \
+        gp = MultivariateEmulator(X=training_set , \
                         y=samples, thresh=thresh, n_tries=n_tries )
     except:
-        gp = gp_emulator.GaussianProcess( samples, training_set )
+        gp = GaussianProcess( samples, training_set )
         gp.learn_hyperparameters()
 
     
@@ -143,7 +145,6 @@ def create_emulator_validation ( f_simulator, parameters, minvals, maxvals,
         delta = np.array ( delta )
         for i, pp in enumerate( val_set ):
             xx0 = pp[0]*1.
-            extras = pp[1:]
             grad_val_set = []
             f0 = validation_set[i]
             df = []
