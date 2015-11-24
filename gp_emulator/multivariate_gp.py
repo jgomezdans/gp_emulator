@@ -91,7 +91,6 @@ class MultivariateEmulator ( object ):
                         basis_functions = f[ 'basis_functions' ]
                         n_pcs = f[ 'n_pcs' ]
                         f.close()
-                    else:
                     
                 else:    
                     
