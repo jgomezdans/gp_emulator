@@ -122,7 +122,7 @@ def create_emulator_validation ( f_simulator, parameters, minvals, maxvals,
                         y=samples, thresh=thresh, n_tries=n_tries )
     except:
         gp = GaussianProcess( samples, training_set )
-        gp.learn_hyperparameters()
+        gp.learn_hyperparameters( n_tries = n_tries )
 
     
     X = [ gp.predict ( np.atleast_2d(x) ) 
