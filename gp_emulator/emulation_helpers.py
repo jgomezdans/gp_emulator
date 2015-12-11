@@ -108,6 +108,7 @@ def create_emulator_validation ( f_simulator, parameters, minvals, maxvals,
     
     # We have the input pairs for the training and validation. We will now run
     # the simulator function
+    
     if n_procs is None:
         training_set = map  ( f_simulator, [( (x,)+args) for x in samples] )
         validation_set = map  ( f_simulator, [( (x,)+args) for x in validate] )
@@ -118,16 +119,15 @@ def create_emulator_validation ( f_simulator, parameters, minvals, maxvals,
         
         training_set = pool.map  ( f_simulator, [( (x,)+args) for x in samples] )
         validation_set = pool.map  ( f_simulator, [( (x,)+args) for x in validate] )
-    training_set = np.array ( training_set )
+    training_set = np.array ( training_set ).squeeze()
     validation_set = np.array ( validation_set )
 
-    try:
-        gp = MultivariateEmulator(X=training_set , \
-                        y=samples, thresh=thresh, n_tries=n_tries )
-    except:
+    if training_set.ndim == 1:
         gp = GaussianProcess( samples, training_set )
         gp.learn_hyperparameters( n_tries = n_tries )
-
+    else:
+        gp = MultivariateEmulator(X=training_set , \
+                        y=samples, thresh=thresh, n_tries=n_tries )
     
     X = [ gp.predict ( np.atleast_2d(x) ) 
                         for x in validate ] 
