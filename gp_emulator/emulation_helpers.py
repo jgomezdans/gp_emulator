@@ -50,7 +50,7 @@ def create_validation_set ( distributions, n_validate=500 ):
 
 def create_emulator_validation ( f_simulator, parameters, minvals, maxvals, 
                                 n_train, n_validate, do_gradient=True, 
-                                thresh=0.98, n_tries=5, args=() ):
+                                thresh=0.98, n_tries=5, args=(), n_procs=None ):
 
 
     """A method to create an emulator, given the simulator function, the
@@ -108,12 +108,16 @@ def create_emulator_validation ( f_simulator, parameters, minvals, maxvals,
     
     # We have the input pairs for the training and validation. We will now run
     # the simulator function
-    
-    pool = multiprocessing.Pool ()
-    
-    
-    training_set = pool.map  ( f_simulator, [( (x,)+args) for x in samples] )
-    validation_set = pool.map  ( f_simulator, [( (x,)+args) for x in validate] )
+    if n_procs is None:
+        training_set = map  ( f_simulator, [( (x,)+args) for x in samples] )
+        validation_set = map  ( f_simulator, [( (x,)+args) for x in validate] )
+        
+    else:
+        pool = multiprocessing.Pool ( processes = n_procs)
+        
+        
+        training_set = pool.map  ( f_simulator, [( (x,)+args) for x in samples] )
+        validation_set = pool.map  ( f_simulator, [( (x,)+args) for x in validate] )
     training_set = np.array ( training_set )
     validation_set = np.array ( validation_set )
 
