@@ -15,7 +15,7 @@ setup(name='gp_emulator',
         'Intended Audience :: Science/Research',
         'Intended Audience :: End Users/Desktop',
         'Intended Audience :: Developers',
-        'Environment :: Console']
+        'Environment :: Console'],
       author='J Gomez-Dans',
       author_email='j.gomez-dans@ucl.ac.uk',
       url='http://github.com/jgomezdans/gp_emulator',
