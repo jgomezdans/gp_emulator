@@ -6,10 +6,38 @@ GP emulators
 :Date: $Date: 2015-03-17 16:00:00 +0000  $
 :Description: README file
 
-This repository contains an implementation of GPs for emulation in Python. Although many different implementations exist, this particular one deals with fast GP predictions for large number of input vectors, where the training data sets are typically modest (e.g. less than 300 samples). Access to the emulation's partial derivatives and Hessian matrix is calculated, and training is also taken care of.
 
-You can install with 
+.. image:: http://www.nceo.ac.uk/images/NCEO_logo_lrg.jpg
+   :scale: 50 %
+   :alt: NCEO logo
+   :align: right
+   
+.. image:: http://www.esa.int/esalogo/images/logotype/img_colorlogo_darkblue.gif
+   :scale: 20 %
+   :alt: ESA logo
+   :align: left
+
+This repository contains an implementation of GPs for emulation of radiative transfer
+models in Python. This particular implementation is focused on emulating univariate
+output models (e.g. emulating reflectance or radiance for a single sensor band)
+and multivariate outputs (e.g. emulating reflectance/radiance over the entire
+solar reflective domain). The emulators also calculate the gradient of the
+emulated model and the Hessian.
+
+You can install the software with 
 
         python setup.py install
 
 The only requirements are (if memory serves) numpy and scipy.
+
+At some point, pointers to a library of emulators of popular vegetation and
+atmospheric RT codes will be provided.
+
+Citation
+----------
+
+If you use this code, we would be grateful if you cited the following paper:
+
+    Gomez-Dans, J, Lewis, P, Disney, M, "Efficient emulation of radiative transfer 
+    codes using Gaussian processes and application to land surface parameter inferences", Remote Sensing (In Press)
+
