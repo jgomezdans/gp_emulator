@@ -58,6 +58,7 @@ def cpled_model ( x, wavebands, sza, saa, vza, vaa, day, month, do_trans=True ):
     """
     from prosail import run_prosail
     # Invert parameter LAI
+    
     if do_trans:
         x = inverse_transform ( x )
     ################# surface refl with prosail #####################
