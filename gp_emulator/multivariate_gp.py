@@ -224,6 +224,25 @@ class MultivariateEmulator ( object ):
                 self.hyperparams[:,i] = hyperparams[:,i]
                 self.emulators[i]._set_params ( hyperparams[:, i] )
 
+    def hessian ( self, x ):
+        """A method to approximate the Hessian. This method builds on the fact
+        that the spectral emulators are a linear combination of individual
+        emulators. Therefore, we can calculate the Hessian of the spectral
+        emulator as the sum of the individual products of individual Hessians
+        times the spectral basis functions.
+        """
+        the_hessian = np.zeros (( len(x), len(x), 
+                                 len ( self.basis_functions[0] ) ) )
+        x = np.atleast_2d ( x )
+        for i in xrange ( self.n_pcs ):
+            #Calculate the Hessian of the weight
+            this_hessian = self.emulators[i].hessian ( x )
+            # Add this hessian contribution once it's been scaled by the
+            # relevant basis function.
+            the_hessian = the_hessian + \
+                this_hessian.squeeze()[:, :, None]*self.basis_functions[i]
+        return the_hessian
+            
         
     def compress ( self, X ):
         """Project full-rank vector into PC basis"""
