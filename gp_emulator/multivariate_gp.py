@@ -248,20 +248,22 @@ class MultivariateEmulator ( object ):
         """Project full-rank vector into PC basis"""
         return X.dot ( self.basis_functions.T ).T
 
-    def predict ( self, y, do_deriv=True ):
+    def predict ( self, y, do_deriv=True):
         """Prediction of input vector
         
         The individual GPs predict the PC weights, and these are used to 
         reconstruct the value of the function at a point `y`. Additionally,
-        the derivative of the function is also calculated. This is returned
-        as a `( N_params, N_full )` vector (i.e., it needs to be reduced 
-        along axis 1)
+        the derivative and second derivative of the function is also calculated. 
+        This is returned as a `( N_params, N_full )` vector (i.e., it needs 
+        to be reduced along axis 1)
         
         Parameters:
         y: array
             The value of the prediction point
         do_deriv: bool
             Whether derivatives are required or not
+        do_unc: bool
+            Whether the second order derivatives are required or not.
         """
         fwd = np.zeros ( self.basis_functions[0].shape[0] )
         y = np.atleast_2d ( y ) # Just in case
@@ -271,8 +273,8 @@ class MultivariateEmulator ( object ):
             pred_mu, pred_var, grad = self.emulators[i].predict ( y )
             fwd += pred_mu * self.basis_functions[i]
             if do_deriv:
-                deriv += np.matrix(grad).T * np.matrix(self.basis_functions[i])
-        if do_deriv:
+                deriv += np.matrix(grad).T * np.matrix(self.basis_functions[i])               
+        elif do_deriv:
             return fwd.squeeze(), deriv
         else:
             return fwd.squeeze()
