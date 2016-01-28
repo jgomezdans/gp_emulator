@@ -1,6 +1,9 @@
 GP emulators
 ==============
 
+.. image:: https://zenodo.org/badge/19469/jgomezdans/gp_emulator.svg
+      :target: https://zenodo.org/badge/latestdoi/19469/jgomezdans/gp_emulator
+
 :Info: Gaussian process (GP) emulators for Python
 :Author: J Gomez-Dans <j.gomez-dans@ucl.ac.uk>
 :Date: $Date: 2015-03-17 16:00:00 +0000  $
