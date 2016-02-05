@@ -41,4 +41,4 @@ Citation
 
 If you use this code, we would be grateful if you cited the following paper:
 	
-	Gómez-Dans, J.L.; Lewis, P.E.; Disney, M. Efficient Emulation of Radiative Transfer Codes Using Gaussian Processes and Application to Land Surface Parameter Inferences. Remote Sens. 2016, 8, 119. DOI:`10.3390/rs8020119 <http://www.mdpi.com/2072-4292/8/2/119>`
+	Gómez-Dans, J.L.; Lewis, P.E.; Disney, M. Efficient Emulation of Radiative Transfer Codes Using Gaussian Processes and Application to Land Surface Parameter Inferences. Remote Sens. 2016, 8, 119. DOI:`10.3390/rs8020119 <http://www.mdpi.com/2072-4292/8/2/119>`_
