@@ -179,7 +179,7 @@ class GaussianProcess:
             
         return theta_opt
 
-    def learn_hyperparameters ( self, n_tries=15, verbose=False ):
+    def learn_hyperparameters ( self, n_tries=15, verbose=False, x0=None ):
 	"""User method to fit the hyperparameters of the model, using
 	random initialisations of parameters. The user should provide
 	a number of tries (e.g. how many random starting points to
@@ -193,12 +193,19 @@ class GaussianProcess:
 	verbose: flag, optional
 		How much information to parrot (e.g. convergence of
 		the minimisation algorithm)
+	x0: array, optional
+		If you want to start the learning process with a 
+		particular vector, set it up here.
 
 	"""
         log_like = []
         params = []
+	first = True
         for theta in 5.*(np.random.rand(n_tries, self.D+2) - 0.5):
-            T = self._learn ( theta ,verbose )
+            if first and x0 is not None:
+		first = False
+		theta = x0
+            T = self._learn ( theta, verbose )
             log_like.append ( T[1] )
             params.append ( T[0] )
         log_like = np.array ( log_like )
