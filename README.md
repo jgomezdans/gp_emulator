@@ -6,7 +6,7 @@
 ## Gaussian process (GP) emulators for Python
 
 ### Author  
-J Gomez-Dans <j.gomez-dans@ucl.ac.uk>
+J Gómez-Dans <j.gomez-dans@ucl.ac.uk>
 
 <p><img src="https://www.nceo.ac.uk/wp-content/themes/nceo/assets/images/logos/img_logo_purple.svg" align="left" />
 
