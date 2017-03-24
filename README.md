@@ -5,13 +5,15 @@
 
 ## Gaussian process (GP) emulators for Python
 
+
+<div align="left">
+ <img src="https://www.nceo.ac.uk/wp-content/themes/nceo/assets/images/logos/img_logo_purple.svg" align="left" width="200px"/>
+
+ <img src="http://www.esa.int/esalogo/images/logotype/img_colorlogo_darkblue.gif" width="200px" align="left" />
+</div>
+
 ### Author  
 J Gómez-Dans <j.gomez-dans@ucl.ac.uk>
-
-<p><img src="https://www.nceo.ac.uk/wp-content/themes/nceo/assets/images/logos/img_logo_purple.svg" align="left" />
-
-<img src="http://www.esa.int/esalogo/images/logotype/img_colorlogo_darkblue.gif" scale="20%" align="right" />
-</p>
 
 
 
