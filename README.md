@@ -8,10 +8,9 @@
 ### Author  
 J Gomez-Dans <j.gomez-dans@ucl.ac.uk>
 
+<img src="https://www.nceo.ac.uk/wp-content/themes/nceo/assets/images/logos/img_logo_purple.svg" align="right" />
 
-![NCEO logo](https://www.nceo.ac.uk/wp-content/themes/nceo/assets/images/logos/img_logo_purple.svg)
-
-![ESA logo](http://www.esa.int/esalogo/images/logotype/img_colorlogo_darkblue.gif)
+<img src="http://www.esa.int/esalogo/images/logotype/img_colorlogo_darkblue.gif" scale="20%" align="left" />
 
 This repository contains an implementation of GPs for emulation of radiative transfer models in Python. This particular implementation is focused on emulating univariate output models (e.g. emulating reflectance or radiance for a single sensor band) and multivariate outputs (e.g. emulating reflectance/radiance over the entire solar reflective domain). The emulators also calculate the gradient of the emulated model and the Hessian.
 
