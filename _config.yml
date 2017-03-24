@@ -1,0 +1,8 @@
+title: Gaussian Process emulators for radiative transfer mdoels
+description: Fast surrogates for typical RT models
+google_analytics: UA-25702318-1
+show_downloads: true
+theme: jekyll-theme-cayman
+
+gems:
+  - jekyll-mentions
