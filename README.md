@@ -1,17 +1,17 @@
 # GP emulators
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.45259.svg)](https://doi.org/10.5281/zenodo.45259)
-
-
-## Gaussian process (GP) emulators for Python
-
-
 <div align="left">
  <img src="https://www.nceo.ac.uk/wp-content/themes/nceo/assets/images/logos/img_logo_purple.svg" align="left" width="200px"/>
 
  <img src="http://www.esa.int/esalogo/images/logotype/img_colorlogo_darkblue.gif" width="200px" align="left" />
 </div>
 <p>&nbsp;</p>
+
+
+## Gaussian process (GP) emulators for Python
+
+
 
 ### Author  
 J Gómez-Dans <j.gomez-dans@ucl.ac.uk>
