@@ -11,6 +11,7 @@
 
  <img src="http://www.esa.int/esalogo/images/logotype/img_colorlogo_darkblue.gif" width="200px" align="left" />
 </div>
+<p>&nbsp;</p>
 
 ### Author  
 J Gómez-Dans <j.gomez-dans@ucl.ac.uk>
