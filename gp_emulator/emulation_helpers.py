@@ -46,8 +46,15 @@ def create_training_set ( parameters, minvals, maxvals,
         distributions.append ( ss.uniform ( loc=minvals[i], \
                             scale=(maxvals[i]-minvals[i] ) ) )
     samples = lhd ( dist=distributions, size=n_train )
+    
     if fix_params is not None:
+        # Extra samples required
         for k,v in fix_params.iteritems():
+            # Check whether they key makes sense
+            if k not in parameters:
+                raise ValueError, "You have specified '%s', which is" %k + \
+                    " not in the parameters list"
+            
             extras = fix_parameter_training_set(parameters, minvals, maxvals,
                                                 k, v[0], v[1])
             samples = np.r_[samples, extras]
@@ -89,7 +96,8 @@ def create_validation_set ( distributions, n_validate=500 ):
 
 def create_emulator_validation ( f_simulator, parameters, minvals, maxvals, 
                                 n_train, n_validate, do_gradient=True, 
-                                thresh=0.98, n_tries=5, args=(), n_procs=None ):
+                                fix_params=None, thresh=0.98, n_tries=5, 
+                                args=(), n_procs=None ):
 
 
     """A method to create an emulator, given the simulator function, the
@@ -97,6 +105,12 @@ def create_emulator_validation ( f_simulator, parameters, minvals, maxvals,
     The function will also provide an independent validation dataset, both for 
     the valuation of the function and its gradient. The gradient is calculated
     using finite differences, so it is a bit ropey.
+    
+    In order to better sample some regions of parameter space easily (you can 
+    change the underlying pdf of the parameters for LHS, but that's overkill)
+    you can also add additional samples where one parameter is set to a fixed
+    value, and an LHS design for all the other parameters is returned. This 
+    can be done usign the `fix_params` keyword.
     
     Parameters
     ------------
@@ -124,7 +138,11 @@ def create_emulator_validation ( f_simulator, parameters, minvals, maxvals,
         A list of extra arguments to the model
     do_gradient: Boolean
         Whether to do a gradient validation too.
-        
+    fix_params: dictionary
+        A dictionary that allows the training set to be extended by fixing one
+        or more parameters to one value, while still doing an LHS on the 
+        remaining parameters. Each parameter has a 2-element tuple, indicating
+        the value and the number of extra samples.
         
     Returns
         The GP object, the validation input set, the validation output set, the
