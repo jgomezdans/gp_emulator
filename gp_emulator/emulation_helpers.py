@@ -6,13 +6,19 @@ from lhd import lhd
 from GaussianProcess import GaussianProcess
 from multivariate_gp import MultivariateEmulator
 
-def create_training_set ( parameters, minvals, maxvals, n_train=200 ):
+def create_training_set ( parameters, minvals, maxvals, 
+                         fix_params=None, n_train=200 ):
     """Creates a traning set for a set of parameters specified by 
     ``parameters`` (not actually used, but useful for debugging
     maybe). Parameters are assumed to be uniformly distributed
     between ``minvals`` and ``maxvals``. ``n_train`` input parameter
     sets will be produced, and returned with the actual distributions
     list. The latter is useful to create validation sets.
+    
+    It is often useful to add extra samples for regions which need to
+    be carefully evaluated. We do this by adding a `fix_params` parameter
+    which should be a dictionary indexing the parameter name, its fixed
+    value, and the number of additional samples that will be drawn.
 
     Parameters
     -------------
@@ -22,6 +28,10 @@ def create_training_set ( parameters, minvals, maxvals, n_train=200 ):
         The minimum value of the parameters. Same order as ``parameters``
     maxvals: list
         The maximum value of the parameters. Same order as ``parameters``
+    fix_params: dictionary
+        A diciontary indexed by the parameter name. Each item will have a 
+        tuple indicating the fixed value of the parameter, and how many 
+        extra LHS samples are required
     n_train: int
         How many training points to produce
 
@@ -36,7 +46,36 @@ def create_training_set ( parameters, minvals, maxvals, n_train=200 ):
         distributions.append ( ss.uniform ( loc=minvals[i], \
                             scale=(maxvals[i]-minvals[i] ) ) )
     samples = lhd ( dist=distributions, size=n_train )
+    if fix_params is not None:
+        for k,v in fix_params.iteritems():
+            extras = fix_parameter_training_set(parameters, minvals, maxvals,
+                                                k, v[0], v[1])
+            samples = np.r_[samples, extras]
+        
     return samples, distributions
+
+def fix_parameter_training_set(parameters, minvals, maxvals, 
+                               fixed_parameter, value, n_train):
+    """Produces a set of extra LHS samples where one parameter
+    has been fixed to a single value, whereas all other parameters
+    take their usual boundaries etc."""
+    from copy import deepcopy # groan
+    parameters = deepcopy(parameters)
+    minvals = deepcopy(minvals)
+    maxvals = deepcopy(maxvals)
+    fix_param = parameters.index(fixed_parameter)
+    reduced_parameters = [p for p in parameters if p != fixed_parameter]
+    minvals.pop(fix_param)
+    maxvals.pop(fix_param)
+    dummy_param = np.ones(n_train)*value
+    distributions = []
+    for i,p in enumerate(reduced_parameters):
+        distributions.append ( ss.uniform ( loc=minvals[i], \
+                            scale=(maxvals[i]-minvals[i] ) ) )
+    samples = lhd ( dist=distributions, size=n_train )
+    
+    extra_array = np.insert(samples, fix_param, dummy_param, axis=1)
+    return extra_array
 
 def create_validation_set ( distributions, n_validate=500 ):
     """Creates a validation set of ``n_validate`` vectors, using the
