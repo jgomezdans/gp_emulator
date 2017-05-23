@@ -11,7 +11,7 @@ import os
 import shelve
 
 import numpy as np
-import h5py
+#import h5py
 
 from GaussianProcess import GaussianProcess
 from multivariate_gp import MultivariateEmulator
@@ -110,7 +110,7 @@ class EmulatorStorage ( object ):
 def convert_npz_to_hdf5 ( npz_file, hdf5_file ):
     """A utility to convert from the old and time honoured .npz format to the
     new HDF5 format."""
-    
+    import h5py # HACK Nasty!
     f = np.load ( npz_file )
     X = f[ 'X' ]
     y = f[ 'y' ]

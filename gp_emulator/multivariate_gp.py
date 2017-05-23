@@ -29,7 +29,7 @@ to be the saved filename, and the emulator will be recreated.
 import os
 import shutil
 
-import h5py
+#import h5py
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -71,17 +71,19 @@ class MultivariateEmulator ( object ):
         """
         if dump is not None:
             if X is None and y is None:
-		if dump.find (".h5") > 0 or dump.find(".hdf5") > 0:
-	            f = h5py.File ( dump, 'r+')
- 	            group = "%s_%03d_%03d_%03d" % ( model, sza, vza, raa )
-        	    X = f[group + '/X_train'][:,:]
-                    y = f[group + '/y_train'][:,:]
-                    hyperparams = f[group+'/hyperparams'][:,:]
-                    thresh = f[group+'/thresh'].value
-                    basis_functions = f[group+"/basis_functions"][:,:]
-                    n_pcs = f[group+"/n_pcs"].value
-                    f.close()
-		elif dump.find(".npz"):
+                if dump.find (".h5") > 0 or dump.find(".hdf5") > 0:
+                    raise IOError, "I can't be bothered working with HDF5 files"
+                    
+                    ##f = h5py.File ( dump, 'r+')
+                    ##group = "%s_%03d_%03d_%03d" % ( model, sza, vza, raa )
+                    ##X = f[group + '/X_train'][:,:]
+                    ##y = f[group + '/y_train'][:,:]
+                    ##hyperparams = f[group+'/hyperparams'][:,:]
+                    ##thresh = f[group+'/thresh'].value
+                    ##basis_functions = f[group+"/basis_functions"][:,:]
+                    ##n_pcs = f[group+"/n_pcs"].value
+                    ##f.close()
+                elif dump.find(".npz"):
                     f =  np.load ( dump ) 
                     X = f[ 'X' ]
                     y = f[ 'y' ]
@@ -94,15 +96,15 @@ class MultivariateEmulator ( object ):
                     
                 else:    
                     
-                    f = h5py.File ( dump, 'r+')
-                    group = "/%s_%03d_%03d_%03d" % ( model, sza, vza, raa )
-                    X = f[group + '/X_train'][:,:]
-                    y = f[group + '/y_train'][:,:]
-                    hyperparams = f[group+'/hyperparams'][:,:]
-                    thresh = f[group+'/thresh'].value
-                    basis_functions = f[group+"/basis_functions"][:,:]
-                    n_pcs = f[group+"/n_pcs"].value
-                    f.close()
+                    #f = h5py.File ( dump, 'r+')
+                    #group = "/%s_%03d_%03d_%03d" % ( model, sza, vza, raa )
+                    #X = f[group + '/X_train'][:,:]
+                    #y = f[group + '/y_train'][:,:]
+                    #hyperparams = f[group+'/hyperparams'][:,:]
+                    #thresh = f[group+'/thresh'].value
+                    #basis_functions = f[group+"/basis_functions"][:,:]
+                    #n_pcs = f[group+"/n_pcs"].value
+                    #f.close()
             else:
                 raise ValueError, "You specified both a dump file and X and y"
         else:
@@ -150,31 +152,32 @@ class MultivariateEmulator ( object ):
         raa = int ( raa )
         if fname.find ( ".npz" ) < 0 and  ( fname.find ( "h5" ) >= 0 \
             or fname.find ( ".hdf" ) >= 0 ):
-            try:
-                f = h5py.File (fname, 'r+')
-            except IOError:
-                print "The file %s did not exist. Creating it" % fname
-                f = h5py.File (fname, 'w')
-                f
-            group = '%s_%03d_%03d_%03d' % ( model_name, sza, vza, raa )
-            if group in f.keys():
-                raise ValueError, "Emulator already exists!"
-            f.create_group ("/%s" % group )
-            f.create_dataset ( "/%s/X_train" % group, data=self.X_train, compression="gzip"  )
-            f.create_dataset ( "/%s/y_train" % group, data=self.y_train, compression="gzip"  )
-            f.create_dataset ( "/%s/hyperparams" % group, data=self.hyperparams,
-                            compression="gzip"  )
-            f.create_dataset ( "/%s/basis_functions" % group, data=self.basis_functions,
-                            compression="gzip"  )
-            f.create_dataset ( "/%s/thresh" % group, data=self.thresh  )
-            f.create_dataset ( "/%s/n_pcs" % group, data=self.n_pcs)
-            f.close()
-            print "Emulator safely saved"
+            raise IOError, "I can't be bothered working with HDF5 files"
+            #try:
+                #f = h5py.File (fname, 'r+')
+            #except IOError:
+                #print "The file %s did not exist. Creating it" % fname
+                #f = h5py.File (fname, 'w')
+                #f
+            #group = '%s_%03d_%03d_%03d' % ( model_name, sza, vza, raa )
+            #if group in f.keys():
+                #raise ValueError, "Emulator already exists!"
+            #f.create_group ("/%s" % group )
+            #f.create_dataset ( "/%s/X_train" % group, data=self.X_train, compression="gzip"  )
+            #f.create_dataset ( "/%s/y_train" % group, data=self.y_train, compression="gzip"  )
+            #f.create_dataset ( "/%s/hyperparams" % group, data=self.hyperparams,
+                            #compression="gzip"  )
+            #f.create_dataset ( "/%s/basis_functions" % group, data=self.basis_functions,
+                            #compression="gzip"  )
+            #f.create_dataset ( "/%s/thresh" % group, data=self.thresh  )
+            #f.create_dataset ( "/%s/n_pcs" % group, data=self.n_pcs)
+            #f.close()
+            #print "Emulator safely saved"
         else:
             np.savez_compressed ( fname, X=self.X_train, y=self.y_train, \
                 hyperparams=self.hyperparams, thresh=self.thresh, \
                 basis_functions=self.basis_functions, n_pcs=self.n_pcs )
-        
+            print "Emulator safely saved"
     
     def calculate_decomposition ( self, X, thresh ):
         """Does PCA decomposition
