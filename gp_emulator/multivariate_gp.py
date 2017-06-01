@@ -94,7 +94,8 @@ class MultivariateEmulator ( object ):
                         n_pcs = f[ 'n_pcs' ]
                         f.close()
                     
-                else:    
+                else:
+                    pass
                     
                     #f = h5py.File ( dump, 'r+')
                     #group = "/%s_%03d_%03d_%03d" % ( model, sza, vza, raa )
@@ -253,7 +254,7 @@ class MultivariateEmulator ( object ):
         """Project full-rank vector into PC basis"""
         return X.dot ( self.basis_functions.T ).T
 
-    def predict ( self, y, do_unc=False, do_deriv=True ):
+    def predict ( self, y, do_unc=True, do_deriv=True ):
         """Prediction of input vector
         
         The individual GPs predict the PC weights, and these are used to 
@@ -293,8 +294,10 @@ class MultivariateEmulator ( object ):
                 deriv += np.matrix(grad).T * np.matrix(self.basis_functions[i])
             if do_unc:
                 unc += pred_var* self.basis_functions[i]
-        
-        return fwd.squeeze(), unc.squeeze(), deriv
+        try:
+            return fwd.squeeze(), unc.squeeze(), deriv
+        except AttributeError:
+            return fwd.squeeze(), unc, deriv
 
 
 if __name__ == "__main__":
