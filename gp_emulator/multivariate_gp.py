@@ -253,7 +253,7 @@ class MultivariateEmulator ( object ):
         """Project full-rank vector into PC basis"""
         return X.dot ( self.basis_functions.T ).T
 
-    def predict ( self, y, do_deriv=True ):
+    def predict ( self, y, do_unc=False, do_deriv=True ):
         """Prediction of input vector
         
         The individual GPs predict the PC weights, and these are used to 
@@ -267,20 +267,34 @@ class MultivariateEmulator ( object ):
             The value of the prediction point
         do_deriv: bool
             Whether derivatives are required or not
+        do_unc: bool
+            Whether to calculate the uncertainty or not 
+            
+        Returns:
+        
+        A tuple with the predicted mean, predicted variance and 
+        patial derivatives. If any of the latter two elements have
+        been switched off by `do_deriv` or `do_unc`, they'll be returned
+        as `None`.
         """
         fwd = np.zeros ( self.basis_functions[0].shape[0] )
         y = np.atleast_2d ( y ) # Just in case
+        deriv = None
+        unc = None
         if do_deriv:
             deriv = np.zeros ( ( y.shape[1], self.basis_functions.shape[1] ) )
+        if do_unc:
+            unc = np.zeros_like(fwd)
         for i in xrange ( self.n_pcs ):
-            pred_mu, pred_var, grad = self.emulators[i].predict ( y )
+            pred_mu, pred_var, grad = self.emulators[i].predict ( y, 
+                                do_unc=do_unc, do_deriv=do_deriv )
             fwd += pred_mu * self.basis_functions[i]
             if do_deriv:
                 deriv += np.matrix(grad).T * np.matrix(self.basis_functions[i])
-        if do_deriv:
-            return fwd.squeeze(), deriv
-        else:
-            return fwd.squeeze()
+            if do_unc:
+                unc += pred_var* self.basis_functions[i]
+        
+        return fwd.squeeze(), unc.squeeze(), deriv
 
 
 if __name__ == "__main__":
