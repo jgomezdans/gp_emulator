@@ -259,22 +259,14 @@ class GaussianProcess:
         if do_unc:
 	    var = b - np.sum (  a * np.dot(self.invQ,a), axis=0)
         # Derivative and partial derivatives of the function
-<<<<<<< HEAD
-        deriv = np.zeros ( ( nn, self.D ) )
 
-        for d in range ( self.D ):
-            aa = self.inputs[:,d].flatten()[None,:] - testing[:,d].flatten()[:,None]
-            c = a*aa.T
-=======
         if do_deriv:
             deriv = np.zeros ( ( nn, self.D ) )
-            for d in xrange ( self.D ):
+            for d in range ( self.D ):
                 aa = self.inputs[:,d].flatten()[None,:] - \
                     testing[:,d].flatten()[:,None]
                 c = a*aa.T
                 deriv[:, d] = expX[d]*np.dot(c.T, self.invQt)
->>>>>>> origin
-
         return mu, var, deriv
         
     def hessian ( self, testing ):
