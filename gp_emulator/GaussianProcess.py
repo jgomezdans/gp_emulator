@@ -18,7 +18,7 @@ def k_fold_cross_validation(X, K, randomise = False):
     if randomise: 
         X = list(X)
         random.shuffle(X)
-    for k in xrange(K):
+    for k in range(K):
         training = [x for i, x in enumerate(X) if i % K != k]
         validation = [x for i, x in enumerate(X) if i % K == k]
         yield training, validation
@@ -59,7 +59,7 @@ class GaussianProcess:
         exp_theta = np.exp ( self.theta )
         # Calculation of the covariance matrix Q using theta
         self.Z = np.zeros ( (self.n, self.n) )
-        for d in xrange( self.D ):
+        for d in range( self.D ):
             self.Z = self.Z + exp_theta[d]*\
                             ((np.tile( self.inputs[:, d], (self.n, 1)) - \
                               np.tile( self.inputs[:, d], (self.n, 1)).T))**2
@@ -105,7 +105,7 @@ class GaussianProcess:
 	"""
         partial_d = np.zeros ( self.D + 2 )
         
-        for d in xrange ( self.D ):
+        for d in range ( self.D ):
             V = ((( np.tile ( self.inputs[:, d], ( self.n, 1)) - \
                 np.tile ( self.inputs[:, d], ( self.n, 1)).T))**2).T*self.Z
             
@@ -210,7 +210,7 @@ class GaussianProcess:
             params.append ( T[0] )
         log_like = np.array ( log_like )
         idx = np.argsort( log_like )[0]
-        print "After %d, the minimum cost was %e" % ( n_tries, log_like[idx] )
+        print("After %d, the minimum cost was %e" % ( n_tries, log_like[idx] ))
         self._set_params ( params[idx])
         return (log_like[idx], params[idx] )
 
@@ -248,7 +248,7 @@ class GaussianProcess:
         # Derivative and partial derivatives of the function
         deriv = np.zeros ( ( nn, self.D ) )
 
-        for d in xrange ( self.D ):
+        for d in range ( self.D ):
             aa = self.inputs[:,d].flatten()[None,:] - testing[:,d].flatten()[:,None]
             c = a*aa.T
 
@@ -270,8 +270,8 @@ class GaussianProcess:
         a = expX[self.D]*np.exp(-0.5*aprime)
         dd_addition = np.identity(self.D)*expX[:(self.D)]
         hess = np.zeros ( ( nn, self.D , self.D) )
-        for d in xrange ( self.D ):
-            for d2 in xrange(self.D):
+        for d in range ( self.D ):
+            for d2 in range(self.D):
                 aa = expX[d]*( self.inputs[:,d].flatten()[None,:] - 
                                testing[:,d].flatten()[:,None] )*   \
                      expX[d2]*( self.inputs[:,d2].flatten()[None,:] - 
@@ -308,9 +308,9 @@ if __name__ == "__main__":
         gp = GaussianProcess ( inputs_t, yields_t )
         theta_min= gp.learn_hyperparameters (n_tries=2)
         pred_mu, pred_var, par_dev = gp.predict ( inputs_v )
-        print "TEST"
-        print inputs_v
-        print pred_mu, pred_var, par_dev
+        print("TEST")
+        print(inputs_v)
+        print(pred_mu, pred_var, par_dev)
         r = ( yields_v - pred_mu )**2#/pred_var
         rmse.append ( [ np.sqrt(r.mean()), theta_min[1] ])
         

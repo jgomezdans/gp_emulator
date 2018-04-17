@@ -13,8 +13,8 @@ import shelve
 import numpy as np
 import h5py
 
-from GaussianProcess import GaussianProcess
-from multivariate_gp import MultivariateEmulator
+from .GaussianProcess import GaussianProcess
+from .multivariate_gp import MultivariateEmulator
 
 
 class EmulatorStorage ( object ):
@@ -38,7 +38,7 @@ class EmulatorStorage ( object ):
             # File exists, so open and get a handle to it
             emulators = shelve.open ( self.fname )
         else:
-            print "File doesn't exist, creating it"
+            print("File doesn't exist, creating it")
             emulators = shelve.open ( self.fname )
 
         if type( tag ) != str:
@@ -71,7 +71,7 @@ class EmulatorStorage ( object ):
             emulators = shelve.open ( self.fname )
         else:
             raise IOError ("File %s doesn't exist!" % self.fname )
-        keys = emulators.keys()
+        keys = list(emulators.keys())
         emulators.close()
         return keys
         
@@ -93,7 +93,7 @@ class EmulatorStorage ( object ):
         if type(tag) != str:
             tag = self._declutter_key ( tag )
             
-        if emulators[tag].has_key ( "basis_functions" ):
+        if "basis_functions" in emulators[tag]:
             gp = MultivariateEmulator ( \
                 X = emulators[tag]["X"], \
                 y=emulators[tag]["y"], \
@@ -129,12 +129,12 @@ def convert_npz_to_hdf5 ( npz_file, hdf5_file ):
     try:
         f = h5py.File (hdf5_file, 'r+')
     except IOError:
-        print "The file %s did not exist. Creating it" % hdf5_file
+        print("The file %s did not exist. Creating it" % hdf5_file)
         f = h5py.File (hdf5_file, 'w')
         f
     group = '%s_%03d_%03d_%03d' % ( model, sza, vza, raa )
-    if group in f.keys():
-        raise ValueError, "Emulator already exists!"
+    if group in list(f.keys()):
+        raise ValueError("Emulator already exists!")
     f.create_group ("/%s" % group )
     f.create_dataset ( "/%s/X_train" % group, data=X, compression="gzip" )
     f.create_dataset ( "/%s/y_train" % group, data=y, compression="gzip"  )
@@ -144,5 +144,5 @@ def convert_npz_to_hdf5 ( npz_file, hdf5_file ):
     f.create_dataset ( "/%s/thresh" % group, data=thresh  )
     f.create_dataset ( "/%s/n_pcs" % group, data=n_pcs)
     f.close()
-    print "Emulator safely saved"
+    print("Emulator safely saved")
 
