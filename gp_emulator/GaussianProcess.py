@@ -214,7 +214,7 @@ class GaussianProcess:
         self._set_params ( params[idx])
         return (log_like[idx], params[idx] )
 
-    def predict ( self, testing, do_unc=True ):
+    def predict ( self, testing, do_deriv=True, do_unc=True ):
 	"""Make a prediction for a set of input vectors, as well as 
 	calculate the partial derivatives of the emulated model, 
 	and optionally, the "emulation uncertainty". 
@@ -228,7 +228,18 @@ class GaussianProcess:
 
 	do_unc: flag, optional
 		Calculate the uncertainty (if you don't set this flag, it
-		can shave a few us"""
+		can shave a few us.
+        do_deriv: flag, optional
+                Whether to calculate the partial derivatives of the emulated
+                model.
+                
+        Returns
+        -------
+        
+        Three parameters (the mean, the variance and the partial derivatives)
+        If some of those outputs have been left out, they are returned as 
+        `None` elements.
+        """
 
 
         ( nn, D ) = testing.shape
@@ -243,20 +254,28 @@ class GaussianProcess:
         b = expX[self.D]
         
         mu = np.dot( a.T, self.invQt)
+        var = None
+        deriv = None
         if do_unc:
 	    var = b - np.sum (  a * np.dot(self.invQ,a), axis=0)
         # Derivative and partial derivatives of the function
+<<<<<<< HEAD
         deriv = np.zeros ( ( nn, self.D ) )
 
         for d in range ( self.D ):
             aa = self.inputs[:,d].flatten()[None,:] - testing[:,d].flatten()[:,None]
             c = a*aa.T
+=======
+        if do_deriv:
+            deriv = np.zeros ( ( nn, self.D ) )
+            for d in xrange ( self.D ):
+                aa = self.inputs[:,d].flatten()[None,:] - \
+                    testing[:,d].flatten()[:,None]
+                c = a*aa.T
+                deriv[:, d] = expX[d]*np.dot(c.T, self.invQt)
+>>>>>>> origin
 
-            deriv[:, d] = expX[d]*np.dot(c.T, self.invQt)
-        if do_unc:
-            return mu, var, deriv
-        else:
-	    return mu, deriv
+        return mu, var, deriv
         
     def hessian ( self, testing ):
         '''calculates the hessian of the GP for the testing sample. 

@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='gp_emulator',
-      version='1.5.3',
+      version='1.5.5',
       description='A Python GaussianProcess emulator software package',
       classifiers=[
 	'Development Status :: 4 - Beta',

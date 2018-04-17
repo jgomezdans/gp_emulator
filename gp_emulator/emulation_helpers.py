@@ -155,7 +155,7 @@ def create_emulator_validation ( f_simulator, parameters, minvals, maxvals,
     # First, create the training set, using the appropriate function from
     # above...
     samples, distributions = create_training_set ( parameters, minvals, maxvals, 
-                                                  n_train=n_train )
+                                    n_train=n_train, fix_params=fix_params )
     # Now, create the validation set, using the distributions object we got
     # from creating the training set
     validate  = []

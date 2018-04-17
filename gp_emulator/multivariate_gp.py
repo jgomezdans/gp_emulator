@@ -29,7 +29,7 @@ to be the saved filename, and the emulator will be recreated.
 import os
 import shutil
 
-import h5py
+#import h5py
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -71,17 +71,19 @@ class MultivariateEmulator ( object ):
         """
         if dump is not None:
             if X is None and y is None:
-		if dump.find (".h5") > 0 or dump.find(".hdf5") > 0:
-	            f = h5py.File ( dump, 'r+')
- 	            group = "%s_%03d_%03d_%03d" % ( model, sza, vza, raa )
-        	    X = f[group + '/X_train'][:,:]
-                    y = f[group + '/y_train'][:,:]
-                    hyperparams = f[group+'/hyperparams'][:,:]
-                    thresh = f[group+'/thresh'].value
-                    basis_functions = f[group+"/basis_functions"][:,:]
-                    n_pcs = f[group+"/n_pcs"].value
-                    f.close()
-		elif dump.find(".npz"):
+                if dump.find (".h5") > 0 or dump.find(".hdf5") > 0:
+                    raise IOError, "I can't be bothered working with HDF5 files"
+                    
+                    ##f = h5py.File ( dump, 'r+')
+                    ##group = "%s_%03d_%03d_%03d" % ( model, sza, vza, raa )
+                    ##X = f[group + '/X_train'][:,:]
+                    ##y = f[group + '/y_train'][:,:]
+                    ##hyperparams = f[group+'/hyperparams'][:,:]
+                    ##thresh = f[group+'/thresh'].value
+                    ##basis_functions = f[group+"/basis_functions"][:,:]
+                    ##n_pcs = f[group+"/n_pcs"].value
+                    ##f.close()
+                elif dump.find(".npz"):
                     f =  np.load ( dump ) 
                     X = f[ 'X' ]
                     y = f[ 'y' ]
@@ -92,17 +94,18 @@ class MultivariateEmulator ( object ):
                         n_pcs = f[ 'n_pcs' ]
                         f.close()
                     
-                else:    
+                else:
+                    pass
                     
-                    f = h5py.File ( dump, 'r+')
-                    group = "/%s_%03d_%03d_%03d" % ( model, sza, vza, raa )
-                    X = f[group + '/X_train'][:,:]
-                    y = f[group + '/y_train'][:,:]
-                    hyperparams = f[group+'/hyperparams'][:,:]
-                    thresh = f[group+'/thresh'].value
-                    basis_functions = f[group+"/basis_functions"][:,:]
-                    n_pcs = f[group+"/n_pcs"].value
-                    f.close()
+                    #f = h5py.File ( dump, 'r+')
+                    #group = "/%s_%03d_%03d_%03d" % ( model, sza, vza, raa )
+                    #X = f[group + '/X_train'][:,:]
+                    #y = f[group + '/y_train'][:,:]
+                    #hyperparams = f[group+'/hyperparams'][:,:]
+                    #thresh = f[group+'/thresh'].value
+                    #basis_functions = f[group+"/basis_functions"][:,:]
+                    #n_pcs = f[group+"/n_pcs"].value
+                    #f.close()
             else:
                 raise ValueError("You specified both a dump file and X and y")
         else:
@@ -150,31 +153,33 @@ class MultivariateEmulator ( object ):
         raa = int ( raa )
         if fname.find ( ".npz" ) < 0 and  ( fname.find ( "h5" ) >= 0 \
             or fname.find ( ".hdf" ) >= 0 ):
-            try:
-                f = h5py.File (fname, 'r+')
-            except IOError:
-                print("The file %s did not exist. Creating it" % fname)
-                f = h5py.File (fname, 'w')
-                f
-            group = '%s_%03d_%03d_%03d' % ( model_name, sza, vza, raa )
-            if group in list(f.keys()):
-                raise ValueError("Emulator already exists!")
-            f.create_group ("/%s" % group )
-            f.create_dataset ( "/%s/X_train" % group, data=self.X_train, compression="gzip"  )
-            f.create_dataset ( "/%s/y_train" % group, data=self.y_train, compression="gzip"  )
-            f.create_dataset ( "/%s/hyperparams" % group, data=self.hyperparams,
-                            compression="gzip"  )
-            f.create_dataset ( "/%s/basis_functions" % group, data=self.basis_functions,
-                            compression="gzip"  )
-            f.create_dataset ( "/%s/thresh" % group, data=self.thresh  )
-            f.create_dataset ( "/%s/n_pcs" % group, data=self.n_pcs)
-            f.close()
-            print("Emulator safely saved")
+            raise IOError, "I can't be bothered working with HDF5 files"
+            #try:
+                #f = h5py.File (fname, 'r+')
+            #except IOError:
+                #print "The file %s did not exist. Creating it" % fname
+                #f = h5py.File (fname, 'w')
+                #f
+            #group = '%s_%03d_%03d_%03d' % ( model_name, sza, vza, raa )
+            #if group in f.keys():
+                #raise ValueError, "Emulator already exists!"
+            #f.create_group ("/%s" % group )
+            #f.create_dataset ( "/%s/X_train" % group, data=self.X_train, compression="gzip"  )
+            #f.create_dataset ( "/%s/y_train" % group, data=self.y_train, compression="gzip"  )
+            #f.create_dataset ( "/%s/hyperparams" % group, data=self.hyperparams,
+                            #compression="gzip"  )
+            #f.create_dataset ( "/%s/basis_functions" % group, data=self.basis_functions,
+                            #compression="gzip"  )
+            #f.create_dataset ( "/%s/thresh" % group, data=self.thresh  )
+            #f.create_dataset ( "/%s/n_pcs" % group, data=self.n_pcs)
+            #f.close()
+            #print "Emulator safely saved"
+
         else:
             np.savez_compressed ( fname, X=self.X_train, y=self.y_train, \
                 hyperparams=self.hyperparams, thresh=self.thresh, \
                 basis_functions=self.basis_functions, n_pcs=self.n_pcs )
-        
+            print "Emulator safely saved"
     
     def calculate_decomposition ( self, X, thresh ):
         """Does PCA decomposition
@@ -250,7 +255,7 @@ class MultivariateEmulator ( object ):
         """Project full-rank vector into PC basis"""
         return X.dot ( self.basis_functions.T ).T
 
-    def predict ( self, y, do_deriv=True ):
+    def predict ( self, y, do_unc=True, do_deriv=True ):
         """Prediction of input vector
         
         The individual GPs predict the PC weights, and these are used to 
@@ -264,20 +269,36 @@ class MultivariateEmulator ( object ):
             The value of the prediction point
         do_deriv: bool
             Whether derivatives are required or not
+        do_unc: bool
+            Whether to calculate the uncertainty or not 
+            
+        Returns:
+        
+        A tuple with the predicted mean, predicted variance and 
+        patial derivatives. If any of the latter two elements have
+        been switched off by `do_deriv` or `do_unc`, they'll be returned
+        as `None`.
         """
         fwd = np.zeros ( self.basis_functions[0].shape[0] )
         y = np.atleast_2d ( y ) # Just in case
+        deriv = None
+        unc = None
         if do_deriv:
             deriv = np.zeros ( ( y.shape[1], self.basis_functions.shape[1] ) )
+        if do_unc:
+            unc = np.zeros_like(fwd)
         for i in range ( self.n_pcs ):
-            pred_mu, pred_var, grad = self.emulators[i].predict ( y )
+            pred_mu, pred_var, grad = self.emulators[i].predict ( y, 
+                                do_unc=do_unc, do_deriv=do_deriv )
             fwd += pred_mu * self.basis_functions[i]
             if do_deriv:
                 deriv += np.matrix(grad).T * np.matrix(self.basis_functions[i])
-        if do_deriv:
-            return fwd.squeeze(), deriv
-        else:
-            return fwd.squeeze()
+            if do_unc:
+                unc += pred_var* self.basis_functions[i]
+        try:
+            return fwd.squeeze(), unc.squeeze(), deriv
+        except AttributeError:
+            return fwd.squeeze(), unc, deriv
 
 
 if __name__ == "__main__":
