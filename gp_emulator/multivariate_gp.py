@@ -179,7 +179,7 @@ class MultivariateEmulator ( object ):
             np.savez_compressed ( fname, X=self.X_train, y=self.y_train, \
                 hyperparams=self.hyperparams, thresh=self.thresh, \
                 basis_functions=self.basis_functions, n_pcs=self.n_pcs )
-            print "Emulator safely saved"
+            print ("Emulator safely saved")
     
     def calculate_decomposition ( self, X, thresh ):
         """Does PCA decomposition
