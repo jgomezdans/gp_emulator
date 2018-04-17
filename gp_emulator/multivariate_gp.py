@@ -72,7 +72,7 @@ class MultivariateEmulator ( object ):
         if dump is not None:
             if X is None and y is None:
                 if dump.find (".h5") > 0 or dump.find(".hdf5") > 0:
-                    raise IOError, "I can't be bothered working with HDF5 files"
+                    raise IOError("I can't be bothered working with HDF5 files")
                     
                     ##f = h5py.File ( dump, 'r+')
                     ##group = "%s_%03d_%03d_%03d" % ( model, sza, vza, raa )
@@ -153,7 +153,7 @@ class MultivariateEmulator ( object ):
         raa = int ( raa )
         if fname.find ( ".npz" ) < 0 and  ( fname.find ( "h5" ) >= 0 \
             or fname.find ( ".hdf" ) >= 0 ):
-            raise IOError, "I can't be bothered working with HDF5 files"
+            raise IOError("I can't be bothered working with HDF5 files")
             #try:
                 #f = h5py.File (fname, 'r+')
             #except IOError:
