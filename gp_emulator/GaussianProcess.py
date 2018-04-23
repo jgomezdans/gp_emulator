@@ -34,23 +34,23 @@ class GaussianProcess:
         """The inputs are the input vectors, whereas the targets are the
         emulated model outputs.
 
-	Parameters
-	-----------
-	inputs: array size (Ntrain x Ninputs)
-		An input array of size Ntrain * Ninputs (Ntrain is the 
-		number of training samples, Ninputs is the dimensionality
+        Parameters
+        -----------
+        inputs: array size (Ntrain x Ninputs)
+                An input array of size Ntrain * Ninputs (Ntrain is the 
+                number of training samples, Ninputs is the dimensionality
                  of the input vector)
         targets: array size Ntrain
                 The model outputs corresponding to the ``inputs`` training set
         """
-		
+                
         self.inputs = inputs
         self.targets = targets
         ( self.n, self.D ) = self.inputs.shape
     def _prepare_likelihood ( self ):
         """
         This method precalculates matrices and stuff required for the i
-	log-likelihood maximisation routine, so that they can be
+        log-likelihood maximisation routine, so that they can be
         reused when calling the ``predict`` method repeatedly.
         """
         
@@ -77,13 +77,13 @@ class GaussianProcess:
     def loglikelihood ( self, theta ):
         """Calculates the loglikelihood for a set of hyperparameters
         ``theta``. The size of ``theta`` is given by the dimensions of
-	the input vector to the model to be emulated.
+        the input vector to the model to be emulated.
 
-	Parameters
-	----------
-	theta: array
-		Hyperparameters
-	"""
+        Parameters
+        ----------
+        theta: array
+            Hyperparameters
+        """
         self._set_params ( theta )
         
         loglikelihood = 0.5*self.logdetQ + \
@@ -94,15 +94,15 @@ class GaussianProcess:
         return loglikelihood
 
     def partial_devs ( self, theta ):
-	"""This function calculates the partial derivatives of the 
-	cost function as a function of the hyperameters, and is only
-	needed during GP training.
+        """This function calculates the partial derivatives of the 
+        cost function as a function of the hyperameters, and is only
+        needed during GP training.
 
-	Parameters
-	-----------
-	theta: array
-		Hyperparameter set
-	"""
+        Parameters
+        -----------
+        theta: array
+                Hyperparameter set
+        """
         partial_d = np.zeros ( self.D + 2 )
         
         for d in range ( self.D ):
@@ -124,36 +124,36 @@ class GaussianProcess:
         return partial_d
         
     def _set_params ( self, theta ):
-	"""Sets the hyperparameters, and thus also precalculates terms
-	that depend on them. Since hyperparameters are fixed after
-	training, this speeds up some calculations.
-	
-	Parameters
-	-----------
-	theta: array
-		hyperparameters
-`	"""
+        """Sets the hyperparameters, and thus also precalculates terms
+        that depend on them. Since hyperparameters are fixed after
+        training, this speeds up some calculations.
+        
+        Parameters
+        -----------
+        theta: array
+                hyperparameters
+`        """
         
         self.theta = theta
         self._prepare_likelihood ( )
         
     def _learn ( self, theta0, verbose ):
-	"""The training method, called ''learn'' to keep up with the
-	trendy Machine Learning kids!
-	Takes an initial guess of the hyperparameters, and minimises 
-	that through a gradient descent algorithm, using methods
-	``likelihood`` and ``partial_devs`` to select hyperparameters
-	that result in a minimal log-likelihood.
+        """The training method, called ''learn'' to keep up with the
+        trendy Machine Learning kids!
+        Takes an initial guess of the hyperparameters, and minimises 
+        that through a gradient descent algorithm, using methods
+        ``likelihood`` and ``partial_devs`` to select hyperparameters
+        that result in a minimal log-likelihood.
 
-	Parameters
-	-----------
-	theta0: array
-		Hyperparameters
-	verbose: flag
-		Whether to provide lots of information on the 
-		minimiation. Useful to see whether its fitting or
-		not for some hairy problems.
-	"""
+        Parameters
+        -----------
+        theta0: array
+                Hyperparameters
+        verbose: flag
+                Whether to provide lots of information on the 
+                minimiation. Useful to see whether its fitting or
+                not for some hairy problems.
+        """
         # minimise self.loglikelihood (with self.partial_devs) to learn
         # theta
         from scipy.optimize import fmin_cg,fmin_l_bfgs_b
@@ -180,31 +180,31 @@ class GaussianProcess:
         return theta_opt
 
     def learn_hyperparameters ( self, n_tries=15, verbose=False, x0=None ):
-	"""User method to fit the hyperparameters of the model, using
-	random initialisations of parameters. The user should provide
-	a number of tries (e.g. how many random starting points to
-	avoid local minima), and whether it wants lots of information
-	to be reported back.
-	
-	Parameters
-	-----------
-	n_tries: int, optional
-		Number of random starting points
-	verbose: flag, optional
-		How much information to parrot (e.g. convergence of
-		the minimisation algorithm)
-	x0: array, optional
-		If you want to start the learning process with a 
-		particular vector, set it up here.
+        """User method to fit the hyperparameters of the model, using
+        random initialisations of parameters. The user should provide
+        a number of tries (e.g. how many random starting points to
+        avoid local minima), and whether it wants lots of information
+        to be reported back.
+        
+        Parameters
+        -----------
+        n_tries: int, optional
+                Number of random starting points
+        verbose: flag, optional
+                How much information to parrot (e.g. convergence of
+                the minimisation algorithm)
+        x0: array, optional
+                If you want to start the learning process with a 
+                particular vector, set it up here.
 
-	"""
+        """
         log_like = []
         params = []
-	first = True
+        first = True
         for theta in 5.*(np.random.rand(n_tries, self.D+2) - 0.5):
             if first and x0 is not None:
-		first = False
-		theta = x0
+                first = False
+                theta = x0
             T = self._learn ( theta, verbose )
             log_like.append ( T[1] )
             params.append ( T[0] )
@@ -215,20 +215,20 @@ class GaussianProcess:
         return (log_like[idx], params[idx] )
 
     def predict ( self, testing, do_deriv=True, do_unc=True ):
-	"""Make a prediction for a set of input vectors, as well as 
-	calculate the partial derivatives of the emulated model, 
-	and optionally, the "emulation uncertainty". 
+        """Make a prediction for a set of input vectors, as well as 
+        calculate the partial derivatives of the emulated model, 
+        and optionally, the "emulation uncertainty". 
 
-	Parameters
-	-----------
-	testing: array, size Npred * Ninputs
-		The size of this array (and it must always be a 2D array!)
-		is given by the number of input vectors that will be run
-		through the emulator times the input vector size.
+        Parameters
+        -----------
+        testing: array, size Npred * Ninputs
+                The size of this array (and it must always be a 2D array!)
+                is given by the number of input vectors that will be run
+                through the emulator times the input vector size.
 
-	do_unc: flag, optional
-		Calculate the uncertainty (if you don't set this flag, it
-		can shave a few us.
+        do_unc: flag, optional
+                Calculate the uncertainty (if you don't set this flag, it
+                can shave a few us.
         do_deriv: flag, optional
                 Whether to calculate the partial derivatives of the emulated
                 model.
@@ -257,7 +257,7 @@ class GaussianProcess:
         var = None
         deriv = None
         if do_unc:
-	    var = b - np.sum (  a * np.dot(self.invQ,a), axis=0)
+            var = b - np.sum (  a * np.dot(self.invQ,a), axis=0)
         # Derivative and partial derivatives of the function
 
         if do_deriv:
