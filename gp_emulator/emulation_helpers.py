@@ -6,8 +6,8 @@ from .lhd import lhd
 from .GaussianProcess import GaussianProcess
 from .multivariate_gp import MultivariateEmulator
 
-def create_training_set ( parameters, minvals, maxvals, 
-                         fix_params=None, n_train=200 ):
+
+def create_training_set(parameters, minvals, maxvals, fix_params=None, n_train=200):
     """Creates a traning set for a set of parameters specified by 
     ``parameters`` (not actually used, but useful for debugging
     maybe). Parameters are assumed to be uniformly distributed
@@ -42,31 +42,38 @@ def create_training_set ( parameters, minvals, maxvals,
     """
 
     distributions = []
-    for i,p in enumerate(parameters):
-        distributions.append ( ss.uniform ( loc=minvals[i], \
-                            scale=(maxvals[i]-minvals[i] ) ) )
-    samples = lhd ( dist=distributions, size=n_train )
-    
+    for i, p in enumerate(parameters):
+        distributions.append(
+            ss.uniform(loc=minvals[i], scale=(maxvals[i] - minvals[i]))
+        )
+    samples = lhd(dist=distributions, size=n_train)
+
     if fix_params is not None:
         # Extra samples required
-        for k,v in fix_params.items():
+        for k, v in fix_params.items():
             # Check whether they key makes sense
             if k not in parameters:
-                raise ValueError("You have specified '%s', which is" %k + \
-                    " not in the parameters list")
-            
-            extras = fix_parameter_training_set(parameters, minvals, maxvals,
-                                                k, v[0], v[1])
+                raise ValueError(
+                    "You have specified '%s', which is" % k
+                    + " not in the parameters list"
+                )
+
+            extras = fix_parameter_training_set(
+                parameters, minvals, maxvals, k, v[0], v[1]
+            )
             samples = np.r_[samples, extras]
-        
+
     return samples, distributions
 
-def fix_parameter_training_set(parameters, minvals, maxvals, 
-                               fixed_parameter, value, n_train):
+
+def fix_parameter_training_set(
+    parameters, minvals, maxvals, fixed_parameter, value, n_train
+):
     """Produces a set of extra LHS samples where one parameter
     has been fixed to a single value, whereas all other parameters
     take their usual boundaries etc."""
-    from copy import deepcopy # groan
+    from copy import deepcopy  # groan
+
     parameters = deepcopy(parameters)
     minvals = deepcopy(minvals)
     maxvals = deepcopy(maxvals)
@@ -74,31 +81,42 @@ def fix_parameter_training_set(parameters, minvals, maxvals,
     reduced_parameters = [p for p in parameters if p != fixed_parameter]
     minvals.pop(fix_param)
     maxvals.pop(fix_param)
-    dummy_param = np.ones(n_train)*value
+    dummy_param = np.ones(n_train) * value
     distributions = []
-    for i,p in enumerate(reduced_parameters):
-        distributions.append ( ss.uniform ( loc=minvals[i], \
-                            scale=(maxvals[i]-minvals[i] ) ) )
-    samples = lhd ( dist=distributions, size=n_train )
-    
+    for i, p in enumerate(reduced_parameters):
+        distributions.append(
+            ss.uniform(loc=minvals[i], scale=(maxvals[i] - minvals[i]))
+        )
+    samples = lhd(dist=distributions, size=n_train)
+
     extra_array = np.insert(samples, fix_param, dummy_param, axis=1)
     return extra_array
 
-def create_validation_set ( distributions, n_validate=500 ):
+
+def create_validation_set(distributions, n_validate=500):
     """Creates a validation set of ``n_validate`` vectors, using the
     ``distributions`` list."""
-    validate  = []
+    validate = []
     for d in distributions:
-        validate.append ( d.rvs( n_validate ))
-    validate = np.array ( validate ).T
+        validate.append(d.rvs(n_validate))
+    validate = np.array(validate).T
     return validate
 
 
-def create_emulator_validation ( f_simulator, parameters, minvals, maxvals, 
-                                n_train, n_validate, do_gradient=True, 
-                                fix_params=None, thresh=0.98, n_tries=5, 
-                                args=(), n_procs=None ):
-
+def create_emulator_validation(
+    f_simulator,
+    parameters,
+    minvals,
+    maxvals,
+    n_train,
+    n_validate,
+    do_gradient=True,
+    fix_params=None,
+    thresh=0.98,
+    n_tries=5,
+    args=(),
+    n_procs=None,
+):
 
     """A method to create an emulator, given the simulator function, the
     parameters names and boundaries, the number of training input/output pairs. 
@@ -151,78 +169,79 @@ def create_emulator_validation ( f_simulator, parameters, minvals, maxvals,
         using finite differences.
         
     """
-    
+
     # First, create the training set, using the appropriate function from
     # above...
-    samples, distributions = create_training_set ( parameters, minvals, maxvals, 
-                                    n_train=n_train, fix_params=fix_params )
+    samples, distributions = create_training_set(
+        parameters, minvals, maxvals, n_train=n_train, fix_params=fix_params
+    )
     # Now, create the validation set, using the distributions object we got
     # from creating the training set
-    validate  = []
+    validate = []
     for d in distributions:
-        validate.append ( d.rvs( n_validate ))
-    validate = np.array ( validate ).T
-    
+        validate.append(d.rvs(n_validate))
+    validate = np.array(validate).T
+
     # We have the input pairs for the training and validation. We will now run
     # the simulator function
-    
+
     if n_procs is None:
-        training_set = list(map  ( f_simulator, [( (x,)+args) for x in samples] ))
-        validation_set = list(map  ( f_simulator, [( (x,)+args) for x in validate] ))
-        
+        training_set = list(map(f_simulator, [((x,) + args) for x in samples]))
+        validation_set = list(map(f_simulator, [((x,) + args) for x in validate]))
+
     else:
-        pool = multiprocessing.Pool ( processes = n_procs)
-        
-        
-        training_set = pool.map  ( f_simulator, [( (x,)+args) for x in samples] )
-        validation_set = pool.map  ( f_simulator, [( (x,)+args) for x in validate] )
-    training_set = np.array ( training_set ).squeeze()
-    validation_set = np.array ( validation_set )
+        pool = multiprocessing.Pool(processes=n_procs)
+
+        training_set = pool.map(f_simulator, [((x,) + args) for x in samples])
+        validation_set = pool.map(f_simulator, [((x,) + args) for x in validate])
+    training_set = np.array(training_set).squeeze()
+    validation_set = np.array(validation_set)
 
     if training_set.ndim == 1:
-        gp = GaussianProcess( samples, training_set )
-        gp.learn_hyperparameters( n_tries = n_tries )
+        gp = GaussianProcess(samples, training_set)
+        gp.learn_hyperparameters(n_tries=n_tries)
     else:
-        gp = MultivariateEmulator(X=training_set , \
-                        y=samples, thresh=thresh, n_tries=n_tries )
-    
-    X = [ gp.predict ( np.atleast_2d(x) ) 
-                        for x in validate ] 
-    if len ( X[0] ) == 2:
-        emulated_validation = np.array ( [ x[0] for x in X] )
-        emulated_gradient = np.array ( [ x[1] for x in X] )
-    elif len ( X[0] ) == 3:
-        emulated_validation = np.array ( [ x[0] for x in X] )
-        emulated_gradient = np.array ( [ x[2] for x in X] )
+        gp = MultivariateEmulator(
+            X=training_set, y=samples, thresh=thresh, n_tries=n_tries
+        )
+
+    X = [gp.predict(np.atleast_2d(x)) for x in validate]
+    if len(X[0]) == 2:
+        emulated_validation = np.array([x[0] for x in X])
+        emulated_gradient = np.array([x[1] for x in X])
+    elif len(X[0]) == 3:
+        emulated_validation = np.array([x[0] for x in X])
+        emulated_gradient = np.array([x[2] for x in X])
     # Now with gradient... Approximate with finite differences...
-    
-    
 
     if do_gradient:
-        val_set = [( (x,)+args) for x in validate]
+        val_set = [((x,) + args) for x in validate]
         validation_gradient = []
-        delta = [(maxvals[j] - minvals[j])/10000. 
-                    for j in range(len(parameters)) ]
-        delta = np.array ( delta )
-        for i, pp in enumerate( val_set ):
-            xx0 = pp[0]*1.
+        delta = [(maxvals[j] - minvals[j]) / 10000. for j in range(len(parameters))]
+        delta = np.array(delta)
+        for i, pp in enumerate(val_set):
+            xx0 = pp[0] * 1.
             grad_val_set = []
             f0 = validation_set[i]
             df = []
-            for j in range ( len ( parameters ) ):
-                xx = xx0*1
+            for j in range(len(parameters)):
+                xx = xx0 * 1
                 xx[j] = xx0[j] + delta[j]
-                grad_val_set.append ( xx  )
-                df.append ( f_simulator ( ( (xx,) + args ) ) )
-            df = np.array ( df )
+                grad_val_set.append(xx)
+                df.append(f_simulator(((xx,) + args)))
+            df = np.array(df)
             try:
-                validation_gradient.append (  (df-f0)/delta )
+                validation_gradient.append((df - f0) / delta)
             except ValueError:
-                validation_gradient.append (  (df-f0)/delta[:, None] )
-                
-        return gp, validate, validation_set, np.array(validation_gradient), \
-            emulated_validation, emulated_gradient.squeeze()
-    else:
-        return gp, validate, validation_set,  emulated_validation, \
-            emulated_gradient
+                validation_gradient.append((df - f0) / delta[:, None])
 
+        return (
+            gp,
+            validate,
+            validation_set,
+            np.array(validation_gradient),
+            emulated_validation,
+            emulated_gradient.squeeze(),
+        )
+    else:
+        return gp, validate, validation_set, emulated_validation, emulated_gradient
