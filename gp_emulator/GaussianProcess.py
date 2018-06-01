@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-import warnings
-import numpy as np
-import scipy.spatial.distance as dist
 import random
+import warnings
+
+import numpy as np
+
+import scipy.spatial.distance as dist
 
 
 def k_fold_cross_validation(X, K, randomise=False):
@@ -25,7 +27,7 @@ def k_fold_cross_validation(X, K, randomise=False):
         yield training, validation
 
 
-class GaussianProcess:
+class GaussianProcess(object):
     """
     A simple class for Gaussian Process emulation. Currently, it assumes
     a squared exponential covariance function, but other covariance
@@ -33,7 +35,7 @@ class GaussianProcess:
 
     """
 
-    def __init__(self, inputs, targets):
+    def __init__(self, inputs=None, targets=None, emulator_file=None):
         """The inputs are the input vectors, whereas the targets are the
         emulated model outputs.
 
@@ -46,10 +48,37 @@ class GaussianProcess:
         targets: array size Ntrain
                 The model outputs corresponding to the ``inputs`` training set
         """
+        if emulator_file is None:
+            if inputs is None:
+                raise ValueError("No emulator file given, inputs can't be empty")
+            if targets is None:
+                raise ValueError("No emulator file given, targets can't be empty")
+        else:
+            if inputs is not None:
+                raise ValueError("Can't have both emulator file and input")
+            if targets is not None:
+                raise ValueError("Can't have both emulator file and training")
+            self.inputs = inputs
+            self.targets = targets
+            (self.n, self.D) = self.inputs.shape
 
-        self.inputs = inputs
-        self.targets = targets
+    def _load_emulator(self, emulator_file):
+        """Reads in emulator from npz file
+        We read in an emulator parameterisation from an npz file.
+        """
+        emulator_f = np.load(emulator_file)
+        self.inputs = emulator_f['inputs']
+        self.targets = emulator_f['targets']
         (self.n, self.D) = self.inputs.shape
+        self.theta = emulator_f['theta']
+        self._set_params(self.theta)
+
+    def save_emulator(self, emulator_file):
+        """Save emulator to disk as npz FileExistsError
+        Saves an emulator to disk using an npz file.
+        """
+        np.savez(emulator_file, inputs=self.inputs, targets=self.targets,
+                 theta=self.theta)
 
     def _prepare_likelihood(self):
         """
@@ -197,8 +226,8 @@ class GaussianProcess:
             )
         except np.linalg.LinAlgError:
             warnings.warn(
-                "Optimisation resulted in linear algebra error. "
-                + "Returning last loglikelihood calculated, but this is fishy",
+                "Optimisation resulted in linear algebra error. " +
+                "Returning last loglikelihood calculated, but this is fishy",
                 RuntimeWarning,
             )
             # theta_opt = [ self.current_theta, self.current_loglikelihood ]
@@ -293,8 +322,8 @@ class GaussianProcess:
             deriv = np.zeros((nn, self.D))
             for d in range(self.D):
                 aa = (
-                    self.inputs[:, d].flatten()[None, :]
-                    - testing[:, d].flatten()[:, None]
+                    self.inputs[:, d].flatten()[None, :] -
+                    testing[:, d].flatten()[:, None]
                 )
                 c = a * aa.T
                 deriv[:, d] = expX[d] * np.dot(c.T, self.invQt)
