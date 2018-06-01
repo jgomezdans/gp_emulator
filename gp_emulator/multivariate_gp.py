@@ -168,8 +168,7 @@ class MultivariateEmulator(object):
             The threshold at where to cutoff the percentage of
             variance explained.
         """
-
-        U, s, V = np.linalg.svd(X, full_matrices=True)
+        U, s, V = np.linalg.svd(X, full_matrices=False)
         pcnt_var_explained = s.cumsum() / s.sum()
         self.basis_functions = V[pcnt_var_explained <= thresh]
         self.n_pcs = np.sum(pcnt_var_explained <= thresh)

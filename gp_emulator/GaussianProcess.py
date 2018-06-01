@@ -53,14 +53,16 @@ class GaussianProcess(object):
                 raise ValueError("No emulator file given, inputs can't be empty")
             if targets is None:
                 raise ValueError("No emulator file given, targets can't be empty")
+            self.inputs = inputs
+            self.targets = targets
+            (self.n, self.D) = self.inputs.shape
+
         else:
             if inputs is not None:
                 raise ValueError("Can't have both emulator file and input")
             if targets is not None:
                 raise ValueError("Can't have both emulator file and training")
-            self.inputs = inputs
-            self.targets = targets
-            (self.n, self.D) = self.inputs.shape
+            self._load_emulator(emulator_file)
 
     def _load_emulator(self, emulator_file):
         """Reads in emulator from npz file
@@ -180,7 +182,7 @@ class GaussianProcess(object):
         -----------
         theta: array
                 hyperparameters
-`        """
+        """
 
         self.theta = theta
         self._prepare_likelihood()
