@@ -7,14 +7,52 @@ from .GaussianProcess import GaussianProcess
 from .multivariate_gp import MultivariateEmulator
 
 
+def create_single_band_emulators(emulator, band_pass, n_tries=15):
+    """This function creates per band emulators from the full-spectrum
+    emulator. It requires passing an array of band pass functions of
+    shape `(n_bands x n_wavelengths)` (e.g. (7 x 2101 for the 7 MODIS
+    bands in the solar reflective domain 400-2500 nm with 1 nm spacing).
+    The number of wavelengths should be compatible with that of the
+    spectral emulator. Further, the sum of the band pass or spectral
+    response function should be one (e.g. `np.sum(band_pass[i]) == 1`).
+
+    Parameters
+    ----------
+    emulator: gp_emulator.MultivariateEmulator object
+        A `gp_emulator.MultivariateEmulator` object that already exists.
+    band_pass: iter
+        A 2D array of size `(n_bands x n_wavelengths)`. The sum over the
+        second dimension of the array should evaluate to 1.
+    n_tries: int
+        The number of random starts to train the single band emulator.
+        Might be decreased for convenirnce to 5 or 10.
+
+    Returns
+    -------
+    A list of `n_bands` `GaussianProcess` emulators.
+    """
+
+    n_bands = band_pass.shape[0]
+    x_train_pband = [emulator.X_train[:, band_pass[i, :]].mean(axis=1)
+                     for i in range(n_bands)]
+    x_train_pband = np.array(x_train_pband)
+    emus = []
+    for i in range(n_bands):
+        gp = GaussianProcess(emulator.y_train[:] * 1.,
+                             x_train_pband[i, :])
+        gp.learn_hyperparameters(n_tries=n_tries)
+        emus.append(gp)
+    return emus
+
+
 def create_training_set(parameters, minvals, maxvals, fix_params=None, n_train=200):
-    """Creates a traning set for a set of parameters specified by 
+    """Creates a traning set for a set of parameters specified by
     ``parameters`` (not actually used, but useful for debugging
     maybe). Parameters are assumed to be uniformly distributed
     between ``minvals`` and ``maxvals``. ``n_train`` input parameter
     sets will be produced, and returned with the actual distributions
     list. The latter is useful to create validation sets.
-    
+
     It is often useful to add extra samples for regions which need to
     be carefully evaluated. We do this by adding a `fix_params` parameter
     which should be a dictionary indexing the parameter name, its fixed
@@ -29,8 +67,8 @@ def create_training_set(parameters, minvals, maxvals, fix_params=None, n_train=2
     maxvals: list
         The maximum value of the parameters. Same order as ``parameters``
     fix_params: dictionary
-        A diciontary indexed by the parameter name. Each item will have a 
-        tuple indicating the fixed value of the parameter, and how many 
+        A diciontary indexed by the parameter name. Each item will have a
+        tuple indicating the fixed value of the parameter, and how many
         extra LHS samples are required
     n_train: int
         How many training points to produce
@@ -119,21 +157,21 @@ def create_emulator_validation(
 ):
 
     """A method to create an emulator, given the simulator function, the
-    parameters names and boundaries, the number of training input/output pairs. 
-    The function will also provide an independent validation dataset, both for 
+    parameters names and boundaries, the number of training input/output pairs.
+    The function will also provide an independent validation dataset, both for
     the valuation of the function and its gradient. The gradient is calculated
     using finite differences, so it is a bit ropey.
-    
-    In order to better sample some regions of parameter space easily (you can 
+
+    In order to better sample some regions of parameter space easily (you can
     change the underlying pdf of the parameters for LHS, but that's overkill)
     you can also add additional samples where one parameter is set to a fixed
-    value, and an LHS design for all the other parameters is returned. This 
+    value, and an LHS design for all the other parameters is returned. This
     can be done usign the `fix_params` keyword.
-    
+
     Parameters
     ------------
     f_simulator: function
-        A function that evaluates the simulator. It should take a single 
+        A function that evaluates the simulator. It should take a single
         parameter which will be made out of the input vector, plus whatever
         other extra arguments one needs (stored in ``args``).
     parameters: list
@@ -147,7 +185,7 @@ def create_emulator_validation(
     n_validate: int
         The number of validation samples
     thresh: float
-        For a multivariate output GP, the threshold at which to cut the 
+        For a multivariate output GP, the threshold at which to cut the
         PCA expansion.
     n_tries: int
         The number of tries in the GP hyperparameter stage. The more the better,
@@ -158,16 +196,16 @@ def create_emulator_validation(
         Whether to do a gradient validation too.
     fix_params: dictionary
         A dictionary that allows the training set to be extended by fixing one
-        or more parameters to one value, while still doing an LHS on the 
+        or more parameters to one value, while still doing an LHS on the
         remaining parameters. Each parameter has a 2-element tuple, indicating
         the value and the number of extra samples.
-        
+
     Returns
         The GP object, the validation input set, the validation output set, the
         emulated validation set, the emulated gradient set. If the gradient
-        validation is also done, it will also return the gradient validation 
+        validation is also done, it will also return the gradient validation
         using finite differences.
-        
+
     """
 
     # First, create the training set, using the appropriate function from
