@@ -33,8 +33,14 @@ def create_single_band_emulators(emulator, band_pass, n_tries=15):
     """
 
     n_bands = band_pass.shape[0]
-    x_train_pband = [emulator.X_train[:, band_pass[i, :]].mean(axis=1)
-                     for i in range(n_bands)]
+    if band_pass.dtype == np.bool:
+        x_train_pband = [emulator.X_train[:, band_pass[i, :]].mean(axis=1)
+                         for i in range(n_bands)]
+    else:
+        band_pass = band_pass / (band_pass.sum(axis=1)[:, None])
+        x_train_pband = [np.sum(emulator.X_train[:, :] * band_pass[i, :],
+                                axis=1) for i in range(n_bands)]
+
     x_train_pband = np.array(x_train_pband)
     emus = []
     for i in range(n_bands):
