@@ -28,7 +28,6 @@ to be the saved filename, and the emulator will be recreated.
 """
 
 # import h5py
-import matplotlib.pyplot as plt
 
 import numpy as np
 
@@ -272,45 +271,45 @@ class MultivariateEmulator(object):
             return fwd.squeeze(), unc, deriv
 
 
-if __name__ == "__main__":
-    # read LUT to test this bits
+###if __name__ == "__main__":
+    #### read LUT to test this bits
 
-    f = np.load("test_LUT.npz")
-    angles = f["angles"]
-    train_params = f["train_params"]
-    train_brf = f["train_brf"]
+    ###f = np.load("test_LUT.npz")
+    ###angles = f["angles"]
+    ###train_params = f["train_params"]
+    ###train_brf = f["train_brf"]
 
-    def unpack(params):
-        """Input a dictionary and output keys and array"""
-        inputs = []
-        keys = np.sort(list(params.keys()))
-        for i, k in enumerate(keys):
-            inputs.append(params[k])
-        inputs = np.array(inputs).T
-        return inputs, keys
+    ###def unpack(params):
+        ###"""Input a dictionary and output keys and array"""
+        ###inputs = []
+        ###keys = np.sort(list(params.keys()))
+        ###for i, k in enumerate(keys):
+            ###inputs.append(params[k])
+        ###inputs = np.array(inputs).T
+        ###return inputs, keys
 
-    def pack(inputs, keys):
-        """Input keys and array and output dict"""
-        params = {}
-        for i, k in enumerate(keys):
-            params[k] = inputs[i]
-        return params
+    ###def pack(inputs, keys):
+        ###"""Input keys and array and output dict"""
+        ###params = {}
+        ###for i, k in enumerate(keys):
+            ###params[k] = inputs[i]
+        ###return params
 
-    train_paramsoot, keys = unpack(train_params.tolist())
+    ###train_paramsoot, keys = unpack(train_params.tolist())
 
-    mv_em = MultivariateEmulator(X=train_brf, y=train_paramsoot)
-    y_test = np.array([1., 0.5, 0.5, 1.65, 0.5, 0.5, 0.73, 0.89, 0.44, 0.42, 0.1])
-    hypers = mv_em.hyperparams
-    mv_em2 = MultivariateEmulator(X=train_brf, y=train_paramsoot, hyperparams=hypers)
-    y_arr = y_test * 1
-    for i in range(8):
-        y_arr[-1] = 0.05 + 0.1 * i
-        plt.plot(mv_em.predict(y_arr)[0], "-r", lw=2)
-        plt.plot(mv_em2.predict(y_arr)[0], "-k", lw=1)
-    mv_em.dump_emulator("emulator1.npz")
-    plt.figure()
-    new_em = MultivariateEmulator(dump="emulator1.npz")
-    for i in range(8):
-        y_arr[-1] = 0.05 + 0.1 * i
-        plt.plot(mv_em.predict(y_arr)[0], "-r", lw=2)
-        plt.plot(new_em.predict(y_arr)[0], "-k", lw=1)
+    ###mv_em = MultivariateEmulator(X=train_brf, y=train_paramsoot)
+    ###y_test = np.array([1., 0.5, 0.5, 1.65, 0.5, 0.5, 0.73, 0.89, 0.44, 0.42, 0.1])
+    ###hypers = mv_em.hyperparams
+    ###mv_em2 = MultivariateEmulator(X=train_brf, y=train_paramsoot, hyperparams=hypers)
+    ###y_arr = y_test * 1
+    ###for i in range(8):
+        ###y_arr[-1] = 0.05 + 0.1 * i
+        ###plt.plot(mv_em.predict(y_arr)[0], "-r", lw=2)
+        ###plt.plot(mv_em2.predict(y_arr)[0], "-k", lw=1)
+    ###mv_em.dump_emulator("emulator1.npz")
+    ###plt.figure()
+    ###new_em = MultivariateEmulator(dump="emulator1.npz")
+    ###for i in range(8):
+        ###y_arr[-1] = 0.05 + 0.1 * i
+        ###plt.plot(mv_em.predict(y_arr)[0], "-r", lw=2)
+        ###plt.plot(new_em.predict(y_arr)[0], "-k", lw=1)
