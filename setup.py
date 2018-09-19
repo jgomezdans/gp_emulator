@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from distutils.core import setup, Extension
+import distutils.command.bdist_conda
 
 setup(name='gp_emulator',
-      version='1.5.5',
+      version='1.6.1',
       description='A Python GaussianProcess emulator software package',
       classifiers=[
 	'Development Status :: 4 - Beta',

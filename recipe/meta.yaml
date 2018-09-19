@@ -1,0 +1,30 @@
+package:
+  name: gp_emulator
+  version: 1.6.0
+  
+source:
+  git_tag: 1.6.0
+  git_url: http://github.com/jgomezdans/gp_emulator.git
+
+requirements:
+  build:
+    - python ==3.6
+    - setuptools
+    - numpy
+    - scipy
+    - pytest
+
+  run:
+    - python ==3.6
+    - numpy
+    - scipy
+    - pytest
+
+test:
+  imports:
+    - gp_emulator
+
+about:
+  home: http://github.com/jgomezdans/gp_emulator
+  license: GPLv3
+  summary: "Gaussian Processes for radiative transfer model emulation."
