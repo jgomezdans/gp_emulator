@@ -94,7 +94,7 @@ def create_training_set(parameters, minvals, maxvals, fix_params=None, n_train=2
 
     if fix_params is not None:
         # Extra samples required
-        for k, v in fix_params.items():
+        for k, v in list(fix_params.items()):
             # Check whether they key makes sense
             if k not in parameters:
                 raise ValueError(

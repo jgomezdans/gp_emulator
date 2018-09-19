@@ -20,49 +20,49 @@ def lhd(
     """
     Create a Latin-Hypercube sample design based on distributions defined in the
     `scipy.stats` module
-    
+
     Parameters
     ----------
     dist: array_like
-        frozen scipy.stats.rv_continuous or rv_discrete distribution objects 
+        frozen scipy.stats.rv_continuous or rv_discrete distribution objects
         that are defined previous to calling LHD
 
     size: int
-        integer value for the number of samples to generate for each 
+        integer value for the number of samples to generate for each
         distribution object
-        
+
     dims: int, optional
         if dist is a single distribution object, and dims > 1, the one
         distribution will be used to generate a size-by-dims sampled design
-        
+
     form: str, optional (non-functional at the moment)
-        determines how the sampling is to occur, with the following optional 
+        determines how the sampling is to occur, with the following optional
         values:
             - 'randomized' - completely randomized sampling
-            - 'spacefilling' - space-filling sampling (generally gives a more 
-              accurate sampling of the design when the number of sample points 
+            - 'spacefilling' - space-filling sampling (generally gives a more
+              accurate sampling of the design when the number of sample points
               is small)
             - 'orthogonal' - balanced space-filling sampling (experimental)
-              
-        The 'spacefilling' and 'orthogonal' forms require some iterations to 
-        determine the optimal sampling pattern. 
-        
+
+        The 'spacefilling' and 'orthogonal' forms require some iterations to
+        determine the optimal sampling pattern.
+
     iterations: int, optional (non-functional at the moment)
         used to control the number of allowable search iterations for generating
         'spacefilling' and 'orthogonal' designs
-    
+
     Returns
     -------
-    out: 2d-array, 
-        A 2d-array where each column corresponds to each input distribution and 
+    out: 2d-array,
+        A 2d-array where each column corresponds to each input distribution and
         each row is a sample in the design
-    
+
     Examples
     --------
-    
-    Single distribution: 
+
+    Single distribution:
         - uniform distribution, low = -1, width = 2
-        
+
     >>> import scipy.stats as ss
     >>> d0 = ss.uniform(loc=-1,scale=2)
     >>> print lhd(dist=d0,size=5)
@@ -74,7 +74,7 @@ def lhd(
 
     Single distribution for multiple variables:
         - normal distribution, mean = 0, stdev = 1
-        
+
     >>> d1 = ss.norm(loc=0,scale=1)
     >>> print lhd(dist=d1,size=7,dims=5)
     [[-0.8612785   0.23034412  0.21808001]
@@ -82,12 +82,12 @@ def lhd(
      [-0.978553    0.30394663  0.78483995]
      [-0.26415983  0.15235896  0.51462024]
      [ 0.80805686  0.38891031  0.02076505]
-     [ 1.63028931  0.52104917  1.48016008]] 
-    
+     [ 1.63028931  0.52104917  1.48016008]]
+
     Multiple distributions:
         - beta distribution, alpha = 2, beta = 5
         - exponential distribution, lambda = 1.5
-        
+
     >>> d2 = ss.beta(2,5)
     >>> d3 = ss.expon(scale=1/1.5)
     >>> print lhd(dist=(d1,d2,d3),size=6)
@@ -109,9 +109,9 @@ def lhd(
         of X. X must be a 2xN matrix that contains the lower and upper bounds of
         each column. The lower bound(s) should be in the first row and the upper
         bound(s) should be in the second row.
-        
+
         _lhs(x,samples=N) uses the sample size of N instead of the default (20).
-        
+
         Example:
             >>> x = np.array([[0,-1,3],[1,2,6]])
             >>> print 'x:'; print x
@@ -148,7 +148,7 @@ def lhd(
              [ 0.21128576 -0.13439798  3.65652016]
              [ 0.47516308  0.39957406  4.5797308 ]
              [ 0.64400392  0.90890999  4.92379431]
-             [ 0.96279472  1.79415307  5.52028238]]    
+             [ 0.96279472  1.79415307  5.52028238]]
       """
 
         # determine the segment size

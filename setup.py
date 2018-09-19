@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
+from distutils.core import setup
 from distutils.core import setup, Extension
-import distutils.command.bdist_conda
 
 setup(name='gp_emulator',
       version='1.6.1',
@@ -21,4 +21,5 @@ setup(name='gp_emulator',
       author_email='j.gomez-dans@ucl.ac.uk',
       url='http://github.com/jgomezdans/gp_emulator',
       packages=['gp_emulator'],
+      install_requires=["numpy>=1.13", "scipy>=1.0"]
      )

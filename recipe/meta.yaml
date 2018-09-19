@@ -1,21 +1,21 @@
 package:
   name: gp_emulator
-  version: 1.6.0
+  version: 1.6.2
   
 source:
-  git_tag: 1.6.0
+  git_tag: 1.6.2
   git_url: http://github.com/jgomezdans/gp_emulator.git
 
 requirements:
   build:
-    - python ==3.6
+    - python >=3.6
     - setuptools
     - numpy
     - scipy
     - pytest
 
   run:
-    - python ==3.6
+    - python >=3.6
     - numpy
     - scipy
     - pytest
