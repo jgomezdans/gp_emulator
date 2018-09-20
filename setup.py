@@ -8,7 +8,7 @@ with open(path.join(this_directory, 'README.md'), "rb") as f:
     long_description = f.read().decode('utf-8')
 
 setup(name='gp_emulator',
-      version='1.6.3',
+      version='1.6.4',
       description='A Python Gaussian Process emulator software package',
       classifiers=[
 	'Development Status :: 4 - Beta',
