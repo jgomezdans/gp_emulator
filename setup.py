@@ -1,17 +1,15 @@
 #!/usr/bin/env python
-
-from distutils.core import setup
-from distutils.core import setup, Extension
-
-
 from os import path
+from setuptools import setup
+
+
 this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='gp_emulator',
-      version='1.6.1',
-      description='A Python GaussianProcess emulator software package',
+      version='1.6.3',
+      description='A Python Gaussian Process emulator software package',
       classifiers=[
 	'Development Status :: 4 - Beta',
         'Natural Language :: English',
