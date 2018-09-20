@@ -7,7 +7,7 @@
 
 ### Author  
 J Gómez-Dans <j.gomez-dans@ucl.ac.uk>
-
+<p><img src="http://www.multiply-h2020.eu/wp-content/uploads/2018/08/multiply_banner_2018_klein.jpg" align="center" \></p>
 <p><img src="https://www.nceo.ac.uk/wp-content/themes/nceo/assets/images/logos/img_logo_purple.svg" align="left" />
 
 <img src="http://www.esa.int/esalogo/images/logotype/img_colorlogo_darkblue.gif" scale="20%" align="right" />
@@ -17,11 +17,19 @@ J Gómez-Dans <j.gomez-dans@ucl.ac.uk>
 
 This repository contains an implementation of GPs for emulation of radiative transfer models in Python. This particular implementation is focused on emulating univariate output models (e.g. emulating reflectance or radiance for a single sensor band) and multivariate outputs (e.g. emulating reflectance/radiance over the entire solar reflective domain). The emulators also calculate the gradient of the emulated model and the Hessian.
 
-You can install the software with
+You can install the software with either [conda]<https://docs.anaconda.com/anaconda/>
+
+    conda install -c jgomezdans gp_emulators
+
+or using `pip`...
+
+    pip install gp_emulator
+
+or just clone/download the repository and invoke the `setup.py` script:
 
     python setup.py install
 
-The only requirements are (if memory serves) numpy and scipy. It does have a vague requirement for h5py, but you can disable it, as that's still work in progress.
+The only requirements are (if memory serves) numpy and scipy. 
 
 At some point, pointers to a library of emulators of popular vegetation and atmospheric RT codes will be provided.
 

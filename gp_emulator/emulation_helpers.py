@@ -111,11 +111,31 @@ def create_training_set(parameters, minvals, maxvals, fix_params=None, n_train=2
 
 
 def fix_parameter_training_set(
-    parameters, minvals, maxvals, fixed_parameter, value, n_train
-):
+    parameters, minvals, maxvals, fixed_parameter, value, n_train):
     """Produces a set of extra LHS samples where one parameter
     has been fixed to a single value, whereas all other parameters
-    take their usual boundaries etc."""
+    take their usual boundaries etc.
+    
+    Parameters
+    ----------
+    parameters: list
+        List of parameter names
+    minvals: array
+        Minimum values of parameters. Order is same as in `parameters`
+    maxvals: array
+        Maximum values of parameters. Order is same as in `parameters`
+    fixed_parameter: str
+        The parameter that will be fixed.
+    value: float
+        The value of the the fixed parameter
+    n_train: int
+        Number of training samples
+        
+    Returns
+    -------
+    
+    A new array of parameters
+    """
     from copy import deepcopy  # groan
 
     parameters = deepcopy(parameters)
@@ -139,7 +159,19 @@ def fix_parameter_training_set(
 
 def create_validation_set(distributions, n_validate=500):
     """Creates a validation set of ``n_validate`` vectors, using the
-    ``distributions`` list."""
+    ``distributions`` list.
+    
+    Parameters
+    ------------
+    distributions: list
+        A set of parameter distributions (np.random objects)
+    n_validate: int (optional)
+        The number of samples to draw from `distributions`.
+        
+    Returns
+    -------
+    A bunch of samples
+    """
     validate = []
     for d in distributions:
         validate.append(d.rvs(n_validate))

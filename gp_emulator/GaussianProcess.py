@@ -332,8 +332,9 @@ class GaussianProcess(object):
         return mu, var, deriv
 
     def hessian(self, testing):
-        """calculates the hessian of the GP for the testing sample.
-           hessian returns a (nn by d by d) array
+        """Calculates the hessian of the GP for the testing sample.
+           hessian returns a (nn by d by d) array.
+           
         """
         (nn, D) = testing.shape
         assert D == self.D
