@@ -33,8 +33,8 @@ The only requirements are (if memory serves) numpy and scipy.
 
 At some point, pointers to a library of emulators of popular vegetation and atmospheric RT codes will be provided.
 
-Citation
---------
+### Citation
+
 
 If you use this code, we would be grateful if you cited the following paper:
 

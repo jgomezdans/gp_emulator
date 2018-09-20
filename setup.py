@@ -3,6 +3,12 @@
 from distutils.core import setup
 from distutils.core import setup, Extension
 
+
+from os import path
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+
 setup(name='gp_emulator',
       version='1.6.1',
       description='A Python GaussianProcess emulator software package',
@@ -18,6 +24,8 @@ setup(name='gp_emulator',
         'Intended Audience :: Developers',
         'Environment :: Console'],
       author='J Gomez-Dans',
+      long_description=long_description,
+      long_description_content_type='text/markdown',
       author_email='j.gomez-dans@ucl.ac.uk',
       url='http://github.com/jgomezdans/gp_emulator',
       packages=['gp_emulator'],
