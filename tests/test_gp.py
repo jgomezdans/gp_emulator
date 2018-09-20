@@ -32,14 +32,20 @@ def datadir(tmpdir, request):
 def test_gp_value(datadir):
     fname = datadir("tip_emulator_real.pkl")
     with open(fname, 'rb') as fp:
-        gp = pickle.load(fp, encoding="latin-1")
+        try:
+            gp = pickle.load(fp, encoding="latin-1")
+        except TypeError:
+            gp = pickle.load(fp)
     pred, unc, jac = gp.predict(np.atleast_2d([0.7, 2, 0.18, 4]))
     assert np.allclose( pred, 0.2392899)
 
 def test_gp_variance(datadir):
     fname = datadir("tip_emulator_real.pkl")
     with open(fname, 'rb') as fp:
-        gp = pickle.load(fp, encoding="latin-1")
+        try:
+            gp = pickle.load(fp, encoding="latin-1")
+        except TypeError:
+            gp = pickle.load(fp)
     pred, unc, jac = gp.predict(np.atleast_2d([0.7, 2, 0.18, 4]))
     assert np.allclose(unc, 0.0006086)
     
@@ -47,7 +53,10 @@ def test_gp_variance(datadir):
 def test_gp_jacobian(datadir):
     fname = datadir("tip_emulator_real.pkl")
     with open(fname, 'rb') as fp:
-        gp = pickle.load(fp, encoding="latin-1")
+        try:
+            gp = pickle.load(fp, encoding="latin-1")
+        except TypeError:
+            gp = pickle.load(fp)
     pred, unc, jac = gp.predict(np.atleast_2d([0.7, 2, 0.18, 4]))
     assert np.allclose(np.array([[0.62780396, 0.01440244, 0.03961139, 0.00089103]]),
                        jac)
