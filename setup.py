@@ -4,8 +4,8 @@ from setuptools import setup
 
 
 this_directory = path.abspath(path.dirname(__file__))
-with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
+with open(path.join(this_directory, 'README.md'), "rb") as f:
+    long_description = f.read().decode()
 
 setup(name='gp_emulator',
       version='1.6.3',
