@@ -5,6 +5,7 @@
 [![Build Status](https://travis-ci.org/jgomezdans/gp_emulator.svg?branch=master)](https://travis-ci.org/jgomezdans/gp_emulator)
 [![codecov](https://codecov.io/gh/jgomezdans/gp_emulator/branch/master/graph/badge.svg?longCache=true&style=flat)](https://codecov.io/gh/jgomezdans/gp_emulator)
 [![Anaconda-Server Badge](https://anaconda.org/jgomezdans/gp_emulator/badges/version.svg)](https://anaconda.org/jgomezdans/gp_emulator)
+[![PyPI version](https://badge.fury.io/py/gp_emulator.svg)](https://badge.fury.io/py/gp_emulator)
 
 
 ## Gaussian process (GP) emulators for Python
