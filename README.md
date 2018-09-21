@@ -1,6 +1,10 @@
 # GP emulators
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.45259.svg)](https://doi.org/10.5281/zenodo.45259)
+[![Coverage Status](https://coveralls.io/repos/github/jgomezdans/gp_emulator/badge.svg?branch=tests)](https://coveralls.io/github/jgomezdans/gp_emulator?branch=tests)
+[![Build Status](https://travis-ci.org/jgomezdans/gp_emulator.svg?branch=master)](https://travis-ci.org/jgomezdans/gp_emulator)
+[![codecov](https://codecov.io/gh/jgomezdans/gp_emulator/branch/master/graph/badge.svg?longCache=true&style=flat)](https://codecov.io/gh/jgomezdans/gp_emulator)
+[![Anaconda-Server Badge](https://anaconda.org/jgomezdans/gp_emulator/badges/version.svg)](https://anaconda.org/jgomezdans/gp_emulator)
 
 
 ## Gaussian process (GP) emulators for Python
@@ -12,6 +16,7 @@ J Gómez-Dans <j.gomez-dans@ucl.ac.uk>
 
 <img src="http://www.esa.int/esalogo/images/logotype/img_colorlogo_darkblue.gif" scale="20%" align="right" />
 </p>
+
 
 
 
