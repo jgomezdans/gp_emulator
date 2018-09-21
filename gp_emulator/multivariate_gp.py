@@ -262,7 +262,7 @@ class MultivariateEmulator(object):
             )
             fwd += pred_mu * self.basis_functions[i]
             if do_deriv:
-                deriv += np.matrix(grad).T * np.matrix(self.basis_functions[i])
+                deriv += np.array(grad).T @ np.array(self.basis_functions[i])
             if do_unc:
                 unc += pred_var * self.basis_functions[i]
         try:
