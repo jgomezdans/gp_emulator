@@ -22,7 +22,7 @@ install:
   - python setup.py install
   
 script:
-  - py.test --cov
+  - pytho -m pytest --cov
   - coverage xml
 after_success:
   - codecov
