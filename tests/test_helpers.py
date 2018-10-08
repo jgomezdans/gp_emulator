@@ -14,6 +14,7 @@ from distutils import dir_util
 from gp_emulator import MultivariateEmulator
 from gp_emulator.emulation_helpers import integrate_passbands
 from gp_emulator.emulation_helpers import create_single_band_emulators
+from gp_emulator.emulation_helpers import create_inverse_emulators
 
 @fixture
 def datadir(tmpdir, request):
@@ -64,3 +65,19 @@ def test_singlebandemulators(datadir):
     
     rho_pred, _, _ = gps[0].predict(np.atleast_2d(gp.y_train[10, :]))
     np.allclose(rho_pred, 0.10881985)
+    
+def test_inverseemulators(datadir):
+        
+    gp = MultivariateEmulator(dump=datadir("prosail_000_000_0000.npz"))
+        # Process the S2A spectral response functions into something useable
+    srf = np.loadtxt(datadir("S2A_SRS.csv"), skiprows=1,
+                     delimiter=",")[100:, :]
+    srf[:, 1:] = srf[:, 1:]/np.sum(srf[:, 1:], axis=0)
+    srf_land = srf[:, [1, 2, 3, 4, 5, 6, 7, 8, 11, 12]].T
+
+    #parameters = ["n", "cab", "car", "cbrown", "cw", "cm", "lai", "ala", "bsoil", "psoil"]
+    parameters = ["lai"]
+    inverse_ems = create_inverse_emulators (gp, srf_land, parameters,
+                              n_tries=2)
+    test_k = set(inverse_ems.keys())
+    assert set(parameters) == test_k
