@@ -7,6 +7,34 @@ from .GaussianProcess import GaussianProcess
 from .multivariate_gp import MultivariateEmulator
 
 
+def integrate_passbands(spectrum, band_pass):
+    """Integrate a spectrum over some band pass function.
+    Parameters
+    ----------
+    spectrum: iter
+        An array of spectra (n_spectra * n_wavelengths)
+    band_pass: iter
+        A 2D array of size `(n_bands x n_wavelengths)`. The sum over the
+        second dimension of the array should evaluate to 1.
+        
+    Returns
+    -------
+    An array of n_spectra * n_bands with the integrated spectra.
+    """
+
+    n_bands = band_pass.shape[0]
+    if band_pass.dtype == np.bool:
+        x_pband = [spectrum[:, band_pass[i, :]].mean(axis=1)
+                         for i in range(n_bands)]
+    else:
+        band_pass = band_pass / (band_pass.sum(axis=1)[:, None])
+        x_pband = [np.sum(spectrum[:, :] * band_pass[i, :],
+                                axis=1) for i in range(n_bands)]
+
+    x_train_pband = np.array(x_pband)
+    return x_train_pband
+
+
 def create_single_band_emulators(emulator, band_pass, n_tries=15):
     """This function creates per band emulators from the full-spectrum
     emulator. It requires passing an array of band pass functions of
@@ -32,23 +60,48 @@ def create_single_band_emulators(emulator, band_pass, n_tries=15):
     A list of `n_bands` `GaussianProcess` emulators.
     """
 
-    n_bands = band_pass.shape[0]
-    if band_pass.dtype == np.bool:
-        x_train_pband = [emulator.X_train[:, band_pass[i, :]].mean(axis=1)
-                         for i in range(n_bands)]
-    else:
-        band_pass = band_pass / (band_pass.sum(axis=1)[:, None])
-        x_train_pband = [np.sum(emulator.X_train[:, :] * band_pass[i, :],
-                                axis=1) for i in range(n_bands)]
-
-    x_train_pband = np.array(x_train_pband)
+    x_train_pband = integrate_passbands(emulator.X_train, band_pass)
     emus = []
-    for i in range(n_bands):
+    for i in range(band_pass.shape[0]):
         gp = GaussianProcess(emulator.y_train[:] * 1.,
                              x_train_pband[i, :])
         gp.learn_hyperparameters(n_tries=n_tries)
         emus.append(gp)
     return emus
+
+
+def create_inverse_emulators (original_emulator, band_pass, state_config,
+                              n_tries=10):
+    """
+    This function takes a multivariable output trained emulator
+    and "retrains it" to take input reflectances and report a
+    prediction of single input parameters (i.e., regression from
+    reflectance/radiance to state). This is a useful starting 
+    point for spatial problems.
+    
+    Parameters
+    ------------
+    original_emulator: emulator
+        An emulator (type gp_emulator.GaussianProcess)
+    srf: array
+        A 2d bandpass array (nbands, nfreq). Logical type
+    state_config: ordered dict
+        A state configuration ordered dictionary.
+    """
+    
+    # For simplicity, let's get the training data out of the emulator
+    X = original_emulator.X_train*1.
+    y = original_emulator.y_train*1.
+    # Apply band pass functions here...
+    x_train_pband = integrate_passbands(original_emulator.X_train, band_pass)
+
+    # A container to store the emulators
+    gps = {}
+    for  i, param in enumerate (state_config) :
+        gp = GaussianProcess ( x_train_pband.T, y[:, i] )
+        gp.learn_hyperparameters( n_tries = n_tries )
+        gps[param] = gp 
+    return gps
 
 
 def create_training_set(parameters, minvals, maxvals, fix_params=None, n_train=200):
