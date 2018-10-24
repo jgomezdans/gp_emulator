@@ -93,19 +93,8 @@ class GaussianProcess(object):
 
         exp_theta = np.exp(self.theta)
         # Calculation of the covariance matrix Q using theta
-        self.Z = np.zeros((self.n, self.n))
-        for d in range(self.D):
-            self.Z = (
-                self.Z
-                + exp_theta[d]
-                * (
-                    (
-                        np.tile(self.inputs[:, d], (self.n, 1))
-                        - np.tile(self.inputs[:, d], (self.n, 1)).T
-                    )
-                )
-                ** 2
-            )
+        self.Z = exp_theta[: (self.D)]*dist.cdist(self.inputs,
+                                                  self.inputs, "sqeuclidean")
         self.Z = exp_theta[self.D] * np.exp(-0.5 * self.Z)
         self.Q = self.Z + exp_theta[self.D + 1] * np.eye(self.n)
         L = np.linalg.cholesky(self.Q)
