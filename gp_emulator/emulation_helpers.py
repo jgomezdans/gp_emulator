@@ -16,7 +16,7 @@ def integrate_passbands(spectrum, band_pass):
     band_pass: iter
         A 2D array of size `(n_bands x n_wavelengths)`. The sum over the
         second dimension of the array should evaluate to 1.
-        
+
     Returns
     -------
     An array of n_spectra * n_bands with the integrated spectra.
@@ -24,12 +24,12 @@ def integrate_passbands(spectrum, band_pass):
 
     n_bands = band_pass.shape[0]
     if band_pass.dtype == np.bool:
-        x_pband = [spectrum[:, band_pass[i, :]].mean(axis=1)
-                         for i in range(n_bands)]
+        x_pband = [spectrum[:, band_pass[i, :]].mean(axis=1) for i in range(n_bands)]
     else:
         band_pass = band_pass / (band_pass.sum(axis=1)[:, None])
-        x_pband = [np.sum(spectrum[:, :] * band_pass[i, :],
-                                axis=1) for i in range(n_bands)]
+        x_pband = [
+            np.sum(spectrum[:, :] * band_pass[i, :], axis=1) for i in range(n_bands)
+        ]
 
     x_train_pband = np.array(x_pband)
     return x_train_pband
@@ -63,22 +63,20 @@ def create_single_band_emulators(emulator, band_pass, n_tries=15):
     x_train_pband = integrate_passbands(emulator.X_train, band_pass)
     emus = []
     for i in range(band_pass.shape[0]):
-        gp = GaussianProcess(emulator.y_train[:] * 1.,
-                             x_train_pband[i, :])
+        gp = GaussianProcess(emulator.y_train[:] * 1.0, x_train_pband[i, :])
         gp.learn_hyperparameters(n_tries=n_tries)
         emus.append(gp)
     return emus
 
 
-def create_inverse_emulators (original_emulator, band_pass, state_config,
-                              n_tries=10):
+def create_inverse_emulators(original_emulator, band_pass, state_config, n_tries=10):
     """
     This function takes a multivariable output trained emulator
     and "retrains it" to take input reflectances and report a
     prediction of single input parameters (i.e., regression from
-    reflectance/radiance to state). This is a useful starting 
+    reflectance/radiance to state). This is a useful starting
     point for spatial problems.
-    
+
     Parameters
     ------------
     original_emulator: emulator
@@ -88,19 +86,19 @@ def create_inverse_emulators (original_emulator, band_pass, state_config,
     state_config: ordered dict
         A state configuration ordered dictionary.
     """
-    
+
     # For simplicity, let's get the training data out of the emulator
-    X = original_emulator.X_train*1.
-    y = original_emulator.y_train*1.
+    X = original_emulator.X_train * 1.0
+    y = original_emulator.y_train * 1.0
     # Apply band pass functions here...
-    x_train_pband = integrate_passbands(original_emulator.X_train, band_pass)
+    x_train_pband = integrate_passbands(X, band_pass)
 
     # A container to store the emulators
     gps = {}
-    for  i, param in enumerate (state_config) :
-        gp = GaussianProcess ( x_train_pband.T, y[:, i] )
-        gp.learn_hyperparameters( n_tries = n_tries )
-        gps[param] = gp 
+    for i, param in enumerate(state_config):
+        gp = GaussianProcess(x_train_pband.T, y[:, i])
+        gp.learn_hyperparameters(n_tries=n_tries)
+        gps[param] = gp
     return gps
 
 
@@ -164,11 +162,12 @@ def create_training_set(parameters, minvals, maxvals, fix_params=None, n_train=2
 
 
 def fix_parameter_training_set(
-    parameters, minvals, maxvals, fixed_parameter, value, n_train):
+    parameters, minvals, maxvals, fixed_parameter, value, n_train
+):
     """Produces a set of extra LHS samples where one parameter
     has been fixed to a single value, whereas all other parameters
     take their usual boundaries etc.
-    
+
     Parameters
     ----------
     parameters: list
@@ -183,10 +182,10 @@ def fix_parameter_training_set(
         The value of the the fixed parameter
     n_train: int
         Number of training samples
-        
+
     Returns
     -------
-    
+
     A new array of parameters
     """
     from copy import deepcopy  # groan
@@ -213,14 +212,14 @@ def fix_parameter_training_set(
 def create_validation_set(distributions, n_validate=500):
     """Creates a validation set of ``n_validate`` vectors, using the
     ``distributions`` list.
-    
+
     Parameters
     ------------
     distributions: list
         A set of parameter distributions (np.random objects)
     n_validate: int (optional)
         The number of samples to draw from `distributions`.
-        
+
     Returns
     -------
     A bunch of samples
@@ -246,7 +245,6 @@ def create_emulator_validation(
     args=(),
     n_procs=None,
 ):
-
     """A method to create an emulator, given the simulator function, the
     parameters names and boundaries, the number of training input/output pairs.
     The function will also provide an independent validation dataset, both for
@@ -346,10 +344,10 @@ def create_emulator_validation(
     if do_gradient:
         val_set = [((x,) + args) for x in validate]
         validation_gradient = []
-        delta = [(maxvals[j] - minvals[j]) / 10000. for j in range(len(parameters))]
+        delta = [(maxvals[j] - minvals[j]) / 10000.0 for j in range(len(parameters))]
         delta = np.array(delta)
         for i, pp in enumerate(val_set):
-            xx0 = pp[0] * 1.
+            xx0 = pp[0] * 1.0
             grad_val_set = []
             f0 = validation_set[i]
             df = []
@@ -373,4 +371,4 @@ def create_emulator_validation(
             emulated_gradient.squeeze(),
         )
     else:
-        return gp, validate, validation_set, emulated_validation, emulated_gradient
+        return (gp, validate, validation_set, emulated_validation, emulated_gradient)
