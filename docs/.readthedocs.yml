@@ -2,7 +2,7 @@ formats:
       - htmlzip
 
 python:
-    version: 3
+    version: 3.6
     pip_install: true
     extra_requirements:
         - alldeps
