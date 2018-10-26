@@ -12,10 +12,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
-
+import os
+import sys
+sys.path.insert(0, os.path.abspath('.'))
+#sys.path.append(os.path.abspath('sphinxext'))
 
 # -- Project information -----------------------------------------------------
 
@@ -26,7 +26,7 @@ author = 'J Gomez-Dans'
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '1.6.2'
+release = '1.6.5'
 
 
 # -- General configuration ---------------------------------------------------
@@ -38,15 +38,26 @@ release = '1.6.2'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.ifconfig',
-    'sphinx.ext.viewcode',
-    'sphinxcontrib.napoleon'
+extensions = [ 'sphinxext.mathmpl',
+            'sphinxext.only_directives',
+            'sphinxext.plot_directive',
+                'sphinx.ext.autodoc',
+                'sphinx.ext.intersphinx',
+                'sphinx.ext.mathjax',
+                'sphinx.ext.ifconfig',
+                'sphinx.ext.viewcode',
+                'numpydoc'
 ]
+numpydoc_show_class_members = False
+numpydoc_use_plots = True  # Add the plot directive whenever mpl is imported.
 
+plot_include_source = True
+plot_html_show_source_link = False
+plot_html_show_formats = False
+plot_working_directory = '.'
+plot_rcparams = {
+    'figure.figsize': (10, 4)
+}
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

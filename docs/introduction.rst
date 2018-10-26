@@ -51,15 +51,14 @@ In this case, ``y_pred`` is the model prediction, ``y_sigma`` is the variance as
 
 Let's see a more concrete example. We create a damped sine, add a bit of Gaussian noise, and then subsample a few points (10 in this case), fit the GP, and predict the function over the entire range. We also plot the uncertainty from this prediction.
 
-.. code-block:: python
+.. plot:: 
 
     import random
-    
     import numpy as np
     import matplotlib.pyplot as plt
-    
+
     import gp_emulator
-    
+
     random.seed(111)
     n_samples = 2000
     x = np.linspace(0, 2, n_samples)
@@ -71,17 +70,18 @@ Let's see a more concrete example. We create a damped sine, add a bit of Gaussia
     x_train = np.atleast_2d(x[isel]).T
     y_train = y[isel] 
     plt.plot(x_train[:,0], y_train, 'o', label="Samples")
-    
+
     gp = gp_emulator.GaussianProcess(x_train, y_train)
     gp.learn_hyperparameters(n_tries=25)
-    
+
     y_pred, y_unc, _ = gp.predict(np.atleast_2d(x).T,
-                                  do_unc=True, do_deriv=False)
+                                    do_unc=True, do_deriv=False)
     plt.plot(x, y_pred, '-', lw=2., label="Predicted")
     plt.plot(x, np.exp(-0.7*x)*np.sin(2*np.pi*x/0.9), '-', label="True")
     plt.fill_between(x, y_pred-1.96*y_unc,
-                     y_pred+1.96*y_unc, color="0.8")
+                        y_pred+1.96*y_unc, color="0.8")
     plt.legend(loc="best")
+
 
 We can see that the GP is doing an excellent job in predicting the function, even in the presence of noise, and with a handful of sample points. In situations where there is extrapolation, this is indicated by an increase in the predictive uncertainty.
 
@@ -103,7 +103,7 @@ Now, we're ready to use on a new point ``x_test`` as above: ::
 
 A more concrete example: let's produce a signal that can be decomposed as a sum of scaled orthogonal basis functions...
 
-.. code-block:: python
+.. plot::
 
     import random
     import numpy as np
