@@ -45,11 +45,8 @@ extensions = [ 'matplotlib.sphinxext.mathmpl',
                 'sphinx.ext.intersphinx',
                 'sphinx.ext.mathjax',
                 'sphinx.ext.ifconfig',
-                'sphinx.ext.viewcode',
-                'numpydoc'
+                'sphinx.ext.viewcode'
 ]
-numpydoc_show_class_members = False
-numpydoc_use_plots = True  # Add the plot directive whenever mpl is imported.
 
 plot_include_source = True
 plot_html_show_source_link = False
