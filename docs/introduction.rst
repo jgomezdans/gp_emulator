@@ -143,4 +143,4 @@ A more concrete example: let's produce a signal that can be decomposed as a sum 
     axs[0].plot(validation_set[:, ::25])
     axs[1].plot(10.*(y_pred.T - validation_set))
     axs[0].set_title("Samples from validation dataset")
-    axs[1].set_title("Mismatch between validation simulator and emulator")
+    axs[1].set_title("10*Mismatch between validation simulator and emulator")
