@@ -24,10 +24,14 @@ copyright = '2018, J Gomez-Dans'
 author = 'J Gomez-Dans'
 
 # The short X.Y version
-version = ''
+try:
+    from gp_emulator import __version__ as version
+except ImportError:
+    version = "1.6.5"
+#version = ''
 # The full version, including alpha/beta/rc tags
-release = ''
-
+#release = ''
+release = version
 
 # -- General configuration ---------------------------------------------------
 
