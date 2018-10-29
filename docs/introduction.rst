@@ -51,7 +51,9 @@ In this case, ``y_pred`` is the model prediction, ``y_sigma`` is the variance as
 
 Let's see a more concrete example. We create a damped sine, add a bit of Gaussian noise, and then subsample a few points (10 in this case), fit the GP, and predict the function over the entire range. We also plot the uncertainty from this prediction.
 
+
 .. plot:: 
+    :include-source:
 
     import random
     import numpy as np
@@ -103,7 +105,9 @@ Now, we're ready to use on a new point ``x_test`` as above: ::
 
 A more concrete example: let's produce a signal that can be decomposed as a sum of scaled orthogonal basis functions...
 
+
 .. plot::
+    :include-source:
 
     import random
     import numpy as np
