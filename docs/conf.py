@@ -12,14 +12,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
-import sys
-sys.path.insert(0, os.path.abspath('.'))
-#sys.path.append(os.path.abspath('sphinxext'))
+# import os
+# import sys
+# sys.path.insert(0, os.path.abspath('.'))
 
-sys.path.insert(0, os.path.abspath('../..'))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
-import matplotlib
+
 # -- Project information -----------------------------------------------------
 
 project = 'gp_emulator'
@@ -29,35 +26,9 @@ author = 'J Gomez-Dans'
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '1.6.5'
+release = ''
 
-try:
-    from gp_emulator import __version__ as version
-except ImportError:
-    pass
-else:
-    release = version
 
-# -- Hack for ReadTheDocs ------------------------------------------------------
-# This hack is necessary since RTD does not issue `sphinx-apidoc` before running
-# `sphinx-build -b html . _build/html`. See Issue:
-# https://github.com/rtfd/readthedocs.org/issues/1139
-# DON'T FORGET: Check the box "Install your project inside a virtualenv using
-# setup.py install" in the RTD Advanced Settings.
-
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-if on_rtd:
-    import inspect
-    from sphinx import apidoc
-
-    __location__ = os.path.join(os.getcwd(), os.path.dirname(
-        inspect.getfile(inspect.currentframe())))
-
-    output_dir = os.path.join(__location__, "../docs/api")
-    module_dir = os.path.join(__location__, "../gp_emulator/")
-    cmd_line_template = "sphinx-apidoc -f -o {outputdir} {moduledir}"
-    cmd_line = cmd_line_template.format(outputdir=output_dir, moduledir=module_dir)
-    apidoc.main(cmd_line.split(" "))
 # -- General configuration ---------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -67,22 +38,13 @@ if on_rtd:
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [ 'matplotlib.sphinxext.mathmpl',
-            'matplotlib.sphinxext.plot_directive',
-                'sphinx.ext.autodoc',
-                'sphinx.ext.intersphinx',
-                'sphinx.ext.mathjax',
-                'sphinx.ext.ifconfig',
-                'sphinx.ext.viewcode'
+extensions = [
+    'matplotlib.sphinxext.plot_directive',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.viewcode',
 ]
 
-plot_include_source = True
-plot_html_show_source_link = False
-plot_html_show_formats = False
-plot_working_directory = '.'
-plot_rcparams = {
-    'figure.figsize': (10, 4)
-}
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -216,8 +178,3 @@ epub_exclude_files = ['search.html']
 
 
 # -- Extension configuration -------------------------------------------------
-
-# -- Options for intersphinx extension ---------------------------------------
-
-# Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}

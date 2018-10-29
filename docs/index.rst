@@ -1,5 +1,5 @@
 .. gp_emulator documentation master file, created by
-   sphinx-quickstart on Thu Sep 20 12:56:27 2018.
+   sphinx-quickstart on Mon Oct 29 16:05:31 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
@@ -11,7 +11,7 @@ Welcome to gp_emulator's documentation!
    :caption: Contents:
 
    introduction.rst
-   module_docs.rst
+
 
 Indices and tables
 ==================
