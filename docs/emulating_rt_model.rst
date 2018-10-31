@@ -162,6 +162,9 @@ The validation results looks like this:
    :figwidth: 90%
    
    Distribution of residuals derived from the difference of the emulator and simulator for PROSAIL.
+   
+   
+We can also check that the gradient of the model is sensible, by comparing it with finite difference approximations from the original model, which is already carried out by `create_emulator_validation` if we set the `do_gradient` option.
                                     
 .. figure:: spectral_gradient_prosail.png
    :figwidth: 90%
