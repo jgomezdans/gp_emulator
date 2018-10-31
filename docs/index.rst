@@ -11,6 +11,8 @@ Welcome to gp_emulator's documentation!
    :caption: Contents:
 
    introduction.rst
+   quickstart.rst
+   emulating_rt_model.rst
 
 
 Indices and tables
