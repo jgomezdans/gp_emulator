@@ -146,7 +146,8 @@ An spectral emulator of PROSAIL
 
 For the case of a spectral emulator, the approach is the same, only that we just use the spectral emulator, which is a bit simpler.
 
-code-block:: python
+
+.. code-block:: python
 
     n_train = 350
     n_validate = 100
@@ -154,9 +155,15 @@ code-block:: python
                                     n_train, n_validate, do_gradient=True, 
                                     n_tries=10, args=(30, 0, 0) )
                                     
+
+The validation results looks like this:
                                     
 .. figure:: prosail_spectral_emulator.png                        
    :figwidth: 90%
    
    Distribution of residuals derived from the difference of the emulator and simulator for PROSAIL.
                                     
+.. figure:: spectral_gradient_prosail.png
+   :figwidth: 90%
+   
+   Comparison of the emulated model gradient versus finite difference approximation for LAI and chlorophyll at different spectral regions.
