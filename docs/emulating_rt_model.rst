@@ -139,3 +139,24 @@ A simple validation visualisation looks like this
    :figwidth: 90%
    
    Comparison between the simulated output and the corresponding emulator output for the validation dataset. Correlations (R2) are in all cases better than 0.99. Slope was between 0.97 and 1., whereas the bias term was smaller than 0.002.
+   
+   
+An spectral emulator of PROSAIL
+---------------------------------
+
+For the case of a spectral emulator, the approach is the same, only that we just use the spectral emulator, which is a bit simpler.
+
+code-block:: python
+
+    n_train = 350
+    n_validate = 100
+    x = gp_emulator.create_emulator_validation ( rt_model, parameters, min_vals, max_vals, 
+                                    n_train, n_validate, do_gradient=True, 
+                                    n_tries=10, args=(30, 0, 0) )
+                                    
+                                    
+.. figure:: prosail_spectral_emulator.png                        
+   :figwidth: 90%
+   
+   Distribution of residuals derived from the difference of the emulator and simulator for PROSAIL.
+                                    
