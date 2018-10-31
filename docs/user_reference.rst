@@ -1,9 +1,3 @@
-.. automodule:: sar_pre_processing.sar_pre_processor
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 User Reference
 =================
 
