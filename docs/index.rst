@@ -13,6 +13,7 @@ Welcome to gp_emulator's documentation!
    introduction.rst
    quickstart.rst
    emulating_rt_model.rst
+   user_reference.rst
 
 
 Indices and tables
