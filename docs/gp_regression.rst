@@ -24,7 +24,7 @@ Although the problem is easy, we know that other parameters will have an effect 
 
     np.random.seed(42)
     # Define number of training and validation samples
-    n_train = 350
+    n_train = 200
     n_validate = 500
     # Define the parameters and their spread
     parameters = ["n", "cab", "car", "cbrown", "cw", "cm", "lai", "ala"]
