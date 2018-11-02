@@ -31,7 +31,8 @@ Let's see a more concrete example. We create a damped sine, add a bit of Gaussia
 
     import gp_emulator
 
-    random.seed(111)
+    random.seed(42)
+    np.random.seed(42)
     n_samples = 2000
     x = np.linspace(0, 2, n_samples)
     y = np.exp(-0.7*x)*np.sin(2*np.pi*x/0.9)
@@ -41,7 +42,7 @@ Let's see a more concrete example. We create a damped sine, add a bit of Gaussia
     isel = random.choices(range(n_samples), k=10)
     x_train = np.atleast_2d(x[isel]).T
     y_train = y[isel] 
-    plt.plot(x_train[:,0], y_train, 'o', label="Samples")
+    fig = plt.figure(figsize=(12,4))
 
     gp = gp_emulator.GaussianProcess(x_train, y_train)
     gp.learn_hyperparameters(n_tries=25)
@@ -79,7 +80,6 @@ A more concrete example: let's produce a signal that can be decomposed as a sum 
 .. plot::
     :include-source:
 
-    import random
     import numpy as np
         
     from scipy.fftpack import dct
@@ -87,7 +87,8 @@ A more concrete example: let's produce a signal that can be decomposed as a sum 
     import matplotlib.pyplot as plt
     import gp_emulator
         
-    random.seed(111)
+
+    np.random.seed(42)
         
     n_validate = 250
     n_train = 100
