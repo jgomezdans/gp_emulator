@@ -24,7 +24,7 @@ Although the problem is easy, we know that other parameters will have an effect 
 
     np.random.seed(42)
     # Define number of training and validation samples
-    n_train = 250
+    n_train = 350
     n_validate = 500
     # Define the parameters and their spread
     parameters = ["n", "cab", "car", "cbrown", "cw", "cm", "lai", "ala"]
@@ -84,6 +84,11 @@ Although the problem is easy, we know that other parameters will have an effect 
     plt.title("Slope=%8.4f, "%(regress.slope) + 
               "Intercept=%8.4f, "%(regress.intercept) + 
               "$R^2$=%8.3f" % (regress.rvalue**2))
+
               
-              
+.. figure: gps_as_regressors.png
+    :figwidth: 90%
+    
+    Using Gaussian Processes to regress leaf area index (LAI) from Sentinel-2 data using the PROSAIL RT model. Comparison between the true LAI and retrieved LAI using the GPs.
+
 The results are quite satisfactory. Another issue is whether these results will work as well on real Sentinel-2 data of random vegetation classes!!! One reason why they won't is because above I have assumed the soil to be black. While this won't matter for situations with large canopy cover, it will for low LAI.
