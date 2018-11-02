@@ -25,21 +25,19 @@ Let's see a more concrete example. We create a damped sine, add a bit of Gaussia
 .. plot:: 
     :include-source:
 
-    import random
     import numpy as np
     import matplotlib.pyplot as plt
 
     import gp_emulator
 
-    random.seed(42)
     np.random.seed(42)
     n_samples = 2000
     x = np.linspace(0, 2, n_samples)
     y = np.exp(-0.7*x)*np.sin(2*np.pi*x/0.9)
     y += np.random.randn(n_samples)*0.02
-    plt.plot(x, y, '-', label="Original")
+
     # Select a few random samples from x and y
-    isel = random.choices(range(n_samples), k=10)
+    isel = np.random.choice(n_samples, 10)
     x_train = np.atleast_2d(x[isel]).T
     y_train = y[isel] 
     fig = plt.figure(figsize=(12,4))
@@ -88,7 +86,7 @@ A more concrete example: let's produce a signal that can be decomposed as a sum 
     import gp_emulator
         
 
-    np.random.seed(42)
+    np.random.seed(1)
         
     n_validate = 250
     n_train = 100

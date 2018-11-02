@@ -242,7 +242,6 @@ class MultivariateEmulator(object):
             Whether to calculate the uncertainty or not
 
         Returns:
-
         A tuple with the predicted mean, predicted variance and
         patial derivatives. If any of the latter two elements have
         been switched off by `do_deriv` or `do_unc`, they'll be returned

@@ -71,7 +71,7 @@ Although the problem is easy, we know that other parameters will have an effect 
     ypred, _, _ = gp.predict(validation_s2)
     
     # Plot
-    fig = plt.figure(figsize=(8,8))
+    fig = plt.figure(figsize=(7,7))
     plt.plot(validation_samples[:, 6], ypred, 'o', mfc="none")
     plt.plot([p_mins[6], p_maxs[6]], [p_mins[6], p_maxs[6]],
             '--', lw=3)
@@ -81,9 +81,9 @@ Although the problem is easy, we know that other parameters will have an effect 
     plt.plot(x, regress.slope*x + regress.intercept, '-')
     plt.xlabel(r"Validation LAI $[m^{2}m^{-2}]$")
     plt.ylabel(r"Retrieved LAI $[m^{2}m^{-2}]$")
-    plt.title(f"Slope: {regress.slope:8.4f}, " + 
-              f"Intercept: {regress.intercept:8.4f}, " + 
-              f"$R^2$={regress.rvalue**2:8.3f}")
+    plt.title("Slope=%8.4f, "%(regress.slope) + 
+              "Intercept=%8.4f, "%(regress.intercept) + 
+              "$R^2$=%8.3f" % (regress.rvalue**2))
               
               
 The results are quite satisfactory. Another issue is whether these results will work as well on real Sentinel-2 data of random vegetation classes!!! One reason why they won't is because above I have assumed the soil to be black. While this won't matter for situations with large canopy cover, it will for low LAI.
