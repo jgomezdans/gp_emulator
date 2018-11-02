@@ -10,8 +10,9 @@ Let's assume that we want to retrieve leaf area index (LAI) from Sentinel-2 surf
 
 Although the problem is easy, we know that other parameters will have an effect in the measuremed reflectance, so we can only expect this to work over a limited spread of parameters other than LAI. Here, we show how to use the `gp_emulator` helper functions to create a suitable training set, and perform this.
 
-.. plot::
-    :include-source:
+
+.. code-block:: python
+    :linenos:
 
     import numpy as np
     
@@ -85,9 +86,10 @@ Although the problem is easy, we know that other parameters will have an effect 
               "Intercept=%8.4f, "%(regress.intercept) + 
               "$R^2$=%8.3f" % (regress.rvalue**2))
 
+
               
-.. figure: gps_as_regressors.png
-    :figwidth: 90%
+.. figure:: gps_as_regressors.png
+    :figwidth: 60%
     
     Using Gaussian Processes to regress leaf area index (LAI) from Sentinel-2 data using the PROSAIL RT model. Comparison between the true LAI and retrieved LAI using the GPs.
 
