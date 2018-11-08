@@ -24,6 +24,15 @@ install:
 script:
   - python -m pytest --cov
   - coverage xml
+  
+deploy:
+  provider: pypi
+  user: $PYPI_USER
+  password: $PYPI_PASS
+  on:
+    tags: true
+    branch: master
+
 after_success:
   - codecov
   - coveralls

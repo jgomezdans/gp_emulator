@@ -6,7 +6,7 @@
 [![codecov](https://codecov.io/gh/jgomezdans/gp_emulator/branch/master/graph/badge.svg?longCache=true&style=flat)](https://codecov.io/gh/jgomezdans/gp_emulator)
 [![Anaconda-Server Badge](https://anaconda.org/jgomezdans/gp_emulator/badges/version.svg)](https://anaconda.org/jgomezdans/gp_emulator)
 [![PyPI version](https://badge.fury.io/py/gp_emulator.svg)](https://badge.fury.io/py/gp_emulator)
-
+[![Documentation](https://readthedocs.org/projects/gp-emulator/badge/?version=latest)](https://gp-emulator.readthedocs.io/en/latest/?badge=latest)
 
 ## Gaussian process (GP) emulators for Python
 
@@ -22,6 +22,13 @@ J Gómez-Dans <j.gomez-dans@ucl.ac.uk>
 
 
 This repository contains an implementation of GPs for emulation of radiative transfer models in Python. This particular implementation is focused on emulating univariate output models (e.g. emulating reflectance or radiance for a single sensor band) and multivariate outputs (e.g. emulating reflectance/radiance over the entire solar reflective domain). The emulators also calculate the gradient of the emulated model and the Hessian.
+
+### Documentation
+
+You can read the documentation in [http://http://gp-emulator.readthedocs.io]<http://gp-emulator.readthedocs.io>
+
+### Installation
+
 
 You can install the software with either [conda]<https://docs.anaconda.com/anaconda/>
 
