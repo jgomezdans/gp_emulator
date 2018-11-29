@@ -2,7 +2,7 @@
 
 __author__ = "J Gomez-Dans"
 __copyright__ = "Copyright 2017, 2018 J Gomez-Dans"
-__version__ = "1.6.7"
+__version__ = "1.6.8"
 __license__ = "GPLv3"
 __email__ = "j.gomez-dans@ucl.ac.uk"
 
