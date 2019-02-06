@@ -31,7 +31,7 @@ Development of this code has received funding from the European Union’s Horizo
 
 
 Indices and tables
-==================
+----------------------
 
 * :ref:`genindex`
 * :ref:`modindex`

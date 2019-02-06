@@ -19,15 +19,15 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'gp_emulator'
-copyright = '2018, J Gomez-Dans'
+project = 'MULTIPLY gp_emulator'
+copyright = '2019, J Gomez-Dans'
 author = 'J Gomez-Dans'
 
 # The short X.Y version
 try:
     from gp_emulator import __version__ as version
 except ImportError:
-    version = "1.6.5"
+    version = "1.6.9"
 #version = ''
 # The full version, including alpha/beta/rc tags
 #release = ''
