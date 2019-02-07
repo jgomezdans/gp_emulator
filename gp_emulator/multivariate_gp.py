@@ -80,6 +80,7 @@ class MultivariateEmulator(object):
                 if dump.find(".h5") > 0 or dump.find(".hdf5") > 0:
                     raise IOError("I can't be bothered working with HDF5 files")
                 elif dump.find(".npz"):
+                    self.emulator_file = dump
                     f = np.load(dump)
                     X = f["X"]
                     y = f["y"]

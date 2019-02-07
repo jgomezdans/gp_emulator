@@ -1,9 +1,9 @@
 package:
   name: gp_emulator
-  version: 1.6.8
+  version: 1.6.10
   
 source:
-  git_tag: 1.6.8
+  git_tag: 1.6.10
   git_url: http://github.com/jgomezdans/gp_emulator.git
 
 requirements:

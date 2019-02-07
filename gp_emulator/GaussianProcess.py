@@ -69,6 +69,7 @@ class GaussianProcess(object):
         We read in an emulator parameterisation from an npz file.
         """
         emulator_f = np.load(emulator_file)
+        self.emulator_file = emulator_file
         self.inputs = emulator_f['inputs']
         self.targets = emulator_f['targets']
         (self.n, self.D) = self.inputs.shape
