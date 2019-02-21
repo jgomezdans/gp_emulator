@@ -6,17 +6,20 @@ source:
   git_tag: 1.6.10
   git_url: http://github.com/jgomezdans/gp_emulator.git
 
+build:
+    noarch_python: True
+
 requirements:
   build:
     - python >=3.6
     - setuptools
-    - numpy
+    - numpy >=1.11
     - scipy
     - pytest
 
   run:
     - python >=3.6
-    - numpy
+    - numpy >=1.11
     - scipy
     - pytest
 
